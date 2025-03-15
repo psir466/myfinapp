@@ -1,0 +1,35 @@
+  <ul>
+    @for (account of accounts; track account.id){
+    <li>
+      {{ account.id }}
+
+      	@for (accountline of account.accountLines; track accountline.date){
+
+      		<li>
+      			{{ accountline.date }}
+      		</li>
+
+
+      	}
+
+    </li>
+    }
+  </ul>
+
+
+  <ul>
+
+    @for (sumDate of sumDates; track sumDate.year || sumDate.month){
+
+        <li>
+          {{sumDate.cuurency}} {{sumDate.month}} {{sumDate.sum}} {{sumDate.year}}
+        </li>
+
+    }
+
+  </ul>
+
+  <div>marche</div>
+
+
+  <canvas #myChart></canvas>

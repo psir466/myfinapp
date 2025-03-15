@@ -1,0 +1,11 @@
+
+docker volume create myfinappvolume
+
+docker run -d --name myfinappdbpostgres -v myfinappvolume:/var/lib/postgresql/data -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=myfinappdb -e POSTGRES_USER=admin -p 8300:5432  postgres
+
+docker exec -it myfinappdbpostgres psql -U admin myfinappdb
+
+liste des table :
+myfinappdb=# \dt
+
+\q pour quitter

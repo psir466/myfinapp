@@ -1,0 +1,267 @@
+{
+"components":
+    {
+    "schemas":
+        {
+        "AccountDateSumDTO":
+            {
+            "properties":
+                {
+                "cuurency":
+                    {
+                    "enum":
+                        [
+                        "EUR",
+                        "USD"
+                        ],
+                    "type": "string"
+                    },
+                "month":
+                    {
+                    "format": "int32",
+                    "type": "integer"
+                    },
+                "sum":
+                    {
+                    "type": "number"
+                    },
+                "year":
+                    {
+                    "format": "int32",
+                    "type": "integer"
+                    }
+                },
+            "type": "object"
+            },
+        "AccountHeaderDTO":
+            {
+            "properties":
+                {
+                "accountLines":
+                    {
+                    "items":
+                        {
+                        "$ref": "#/components/schemas/AccountLineDTO"
+                        },
+                    "type": "array"
+                    },
+                "accountType":
+                    {
+                    "enum":
+                        [
+                        "CTO",
+                        "PEA",
+                        "PEAPME",
+                        "ASSURVIE",
+                        "EPARGNESALARIALE"
+                        ],
+                    "type": "string"
+                    },
+                "id":
+                    {
+                    "format": "int64",
+                    "type": "integer"
+                    },
+                "name":
+                    {
+                    "type": "string"
+                    }
+                },
+            "type": "object"
+            },
+        "AccountLineDTO":
+            {
+            "properties":
+                {
+                "date":
+                    {
+                    "format": "date",
+                    "type": "string"
+                    },
+                "solde":
+                    {
+                    "$ref": "#/components/schemas/AmountOfMoney"
+                    }
+                },
+            "type": "object"
+            },
+        "AmountOfMoney":
+            {
+            "properties":
+                {
+                "amount":
+                    {
+                    "type": "number"
+                    },
+                "currency":
+                    {
+                    "enum":
+                        [
+                        "EUR",
+                        "USD"
+                        ],
+                    "type": "string"
+                    }
+                },
+            "type": "object"
+            }
+        }
+    },
+"info":
+    {
+    "title": "OpenAPI definition",
+    "version": "v0"
+    },
+"openapi": "3.1.0",
+"paths":
+    {
+    "/api/account/{id}":
+        {
+        "get":
+            {
+            "description": "Retrieves an account by its id",
+            "operationId": "getAccountById",
+            "parameters":
+                [
+                    {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema":
+                        {
+                        "format": "int64",
+                        "type": "integer"
+                        }
+                    }
+                ],
+            "responses":
+                {
+                "200":
+                    {
+                    "content":
+                        {
+                        "*/*":
+                            {
+                            "schema":
+                                {
+                                "$ref": "#/components/schemas/AccountHeaderDTO"
+                                }
+                            }
+                        },
+                    "description": "OK"
+                    }
+                },
+            "summary": "Get account by id",
+            "tags":
+                [
+                "Api"
+                ]
+            }
+        },
+    "/api/accounts":
+        {
+        "get":
+            {
+            "description": "Retrieves all the account",
+            "operationId": "getAllAccount",
+            "responses":
+                {
+                "200":
+                    {
+                    "content":
+                        {
+                        "*/*":
+                            {
+                            "schema":
+                                {
+                                "items":
+                                    {
+                                    "$ref": "#/components/schemas/AccountHeaderDTO"
+                                    },
+                                "type": "array"
+                                }
+                            }
+                        },
+                    "description": "OK"
+                    }
+                },
+            "summary": "Get all the account",
+            "tags":
+                [
+                "Api"
+                ]
+            }
+        },
+    "/api/accountSumDate/{start}/{end}":
+        {
+        "get":
+            {
+            "description": "Retrieves sum of solde of all accounts by month and year",
+            "operationId": "getSumByDate",
+            "parameters":
+                [
+                    {
+                    "in": "path",
+                    "name": "start",
+                    "required": true,
+                    "schema":
+                        {
+                        "format": "date",
+                        "type": "string"
+                        }
+                    },
+                    {
+                    "in": "path",
+                    "name": "end",
+                    "required": true,
+                    "schema":
+                        {
+                        "format": "date",
+                        "type": "string"
+                        }
+                    }
+                ],
+            "responses":
+                {
+                "200":
+                    {
+                    "content":
+                        {
+                        "*/*":
+                            {
+                            "schema":
+                                {
+                                "items":
+                                    {
+                                    "$ref": "#/components/schemas/AccountDateSumDTO"
+                                    },
+                                "type": "array"
+                                }
+                            }
+                        },
+                    "description": "OK"
+                    }
+                },
+            "summary": "Get sum of solde by month and year",
+            "tags":
+                [
+                "Api"
+                ]
+            }
+        }
+    },
+"servers":
+    [
+        {
+        "description": "Generated server url",
+        "url": "http://localhost:8080"
+        }
+    ],
+"tags":
+    [
+        {
+        "description": "Operations related to accounts",
+        "name": "Api"
+        }
+    ]
+}

@@ -9,6 +9,7 @@ import org.hibernate.mapping.Array;
 import org.psi.myfinappbackapp.dto.AccountDateSumDTO;
 import org.psi.myfinappbackapp.entities.AccountHeader;
 import org.psi.myfinappbackapp.entities.AccountLine;
+import org.psi.myfinappbackapp.entities.AccountLineId;
 import org.psi.myfinappbackapp.repository.AccountHeaderRepository;
 import org.psi.myfinappbackapp.repository.AccountLineRepository;
 import org.psi.myfinappbackapp.util.AccountType;
@@ -35,7 +36,9 @@ public class AddBDForTest {
 
 		acall.stream().forEach(ac ->{
 
-			System.out.print("***************** remove");
+			System.out.print("***************** remove : " + ac.getId());
+
+			
 
 			ac.removeAllAccountLine();
 
@@ -57,13 +60,19 @@ public class AddBDForTest {
 		accountHeader1.setName("Mon PEA");
 		
 		AccountLine accountLine1 = new AccountLine();
-		accountLine1.setDate(LocalDate.of(2024, 10, 26));
+		AccountLineId aclid1 = new AccountLineId();
+		aclid1.setDate(LocalDate.of(2024, 10, 26));
+		aclid1.setHeader(accountHeader1);
 		accountLine1.setSolde(new AmountOfMoney(BigDecimal.valueOf(100.75), Currency.EUR));
-		
+		accountLine1.setAccountLineId(aclid1);
+
 		accountHeader1.addAccountLine(accountLine1);
 		
 		AccountLine accountLine4 = new AccountLine();
-		accountLine4.setDate(LocalDate.of(2025, 10, 26));
+		AccountLineId aclid4 = new AccountLineId();
+		aclid4.setDate(LocalDate.of(2025, 10, 26));
+		aclid4.setHeader(accountHeader1);
+		accountLine4.setAccountLineId(aclid4);
 		accountLine4.setSolde(new AmountOfMoney(BigDecimal.valueOf(2000.75), Currency.EUR));
 		
 		accountHeader1.addAccountLine(accountLine4);
@@ -76,7 +85,10 @@ public class AddBDForTest {
 		accountHeader2.setName("Mon CTO");
 		
 		AccountLine accountLine2 = new AccountLine();
-		accountLine2.setDate(LocalDate.of(2024, 10, 27));
+		AccountLineId aclid2 = new AccountLineId();
+		aclid2.setDate(LocalDate.of(2024, 10, 27));
+		aclid2.setHeader(accountHeader2);
+		accountLine2.setAccountLineId(aclid2);
 		accountLine2.setSolde(new AmountOfMoney(BigDecimal.valueOf(200.75), Currency.EUR));
 		
 		accountHeader2.addAccountLine(accountLine2);
@@ -84,11 +96,15 @@ public class AddBDForTest {
 		accountHeaderRepository.save(accountHeader2);
 
 		AccountHeader accountHeader8 = new AccountHeader();
+		
 		accountHeader8.setAccountType(AccountType.CTO);
 		accountHeader8.setName("Mon CTO");
 		
 		AccountLine accountLine8 = new AccountLine();
-		accountLine8.setDate(LocalDate.of(2025, 01, 27));
+		AccountLineId accountLineId8 = new AccountLineId();
+		accountLineId8.setDate(LocalDate.of(2025, 01, 27));
+		accountLineId8.setHeader(accountHeader8);
+		accountLine8.setAccountLineId(accountLineId8);
 		accountLine8.setSolde(new AmountOfMoney(BigDecimal.valueOf(1400.88), Currency.EUR));
 		
 		accountHeader8.addAccountLine(accountLine8);

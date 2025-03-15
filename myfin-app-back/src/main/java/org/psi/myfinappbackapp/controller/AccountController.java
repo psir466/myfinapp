@@ -7,12 +7,17 @@ import org.psi.myfinappbackapp.dto.AccountDateSumDTO;
 import org.psi.myfinappbackapp.dto.AccountHeaderDTO;
 import org.psi.myfinappbackapp.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,6 +71,31 @@ public class AccountController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+
+	}
+
+	@RequestMapping(value = "/saveaccounts", method = RequestMethod.POST)
+	@Operation(summary = "Post accounts to the database", description = "Post accounts to the database")
+	public ResponseEntity<String> postAccountsToDataBase(@RequestBody List<AccountHeaderDTO> body) {
+
+		try {
+
+			System.out.println(body);
+
+			accountService.saveAccountsToDataBase(body);
+
+			return new ResponseEntity<>("OK", HttpStatus.CREATED);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+
+			System.out.println(e);
+
+			return new ResponseEntity<>("PAS OK", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+
+	
 
 	}
 

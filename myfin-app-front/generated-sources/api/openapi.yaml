@@ -87,6 +87,31 @@ paths:
       - Api
       x-accepts:
       - '*/*'
+  /api/saveaccounts:
+    post:
+      description: Post accounts to the database
+      operationId: postAccountsToDataBase
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/AccountHeaderDTO'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      summary: Post accounts to the database
+      tags:
+      - Api
+      x-content-type: application/json
+      x-accepts:
+      - '*/*'
 components:
   schemas:
     AccountDateSumDTO:

@@ -16,7 +16,7 @@ package org.psi.myfinappfrontapp.auth;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-08T19:30:38.128453200+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-15T16:56:00.367694300+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
 public class HttpBearerAuth implements Authentication {
     private final String scheme;
     private String bearerToken;

@@ -27,7 +27,7 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-08T19:30:38.128453200+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-15T16:56:00.367694300+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
 public class ApiApi {
     private ApiClient apiClient;
 
@@ -271,5 +271,80 @@ public class ApiApi {
      */
     public ResponseSpec getSumByDateWithResponseSpec(LocalDate start, LocalDate end) throws WebClientResponseException {
         return getSumByDateRequestCreation(start, end);
+    }
+
+    /**
+     * Post accounts to the database
+     * Post accounts to the database
+     * <p><b>200</b> - OK
+     * @param accountHeaderDTO The accountHeaderDTO parameter
+     * @return String
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    private ResponseSpec postAccountsToDataBaseRequestCreation(List<AccountHeaderDTO> accountHeaderDTO) throws WebClientResponseException {
+        Object postBody = accountHeaderDTO;
+        // verify the required parameter 'accountHeaderDTO' is set
+        if (accountHeaderDTO == null) {
+            throw new WebClientResponseException("Missing the required parameter 'accountHeaderDTO' when calling postAccountsToDataBase", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+        }
+        // create path and map variables
+        final Map<String, Object> pathParams = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders headerParams = new HttpHeaders();
+        final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "*/*"
+        };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+        };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<String> localVarReturnType = new ParameterizedTypeReference<String>() {};
+        return apiClient.invokeAPI("/api/saveaccounts", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+    }
+
+    /**
+     * Post accounts to the database
+     * Post accounts to the database
+     * <p><b>200</b> - OK
+     * @param accountHeaderDTO The accountHeaderDTO parameter
+     * @return String
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<String> postAccountsToDataBase(List<AccountHeaderDTO> accountHeaderDTO) throws WebClientResponseException {
+        ParameterizedTypeReference<String> localVarReturnType = new ParameterizedTypeReference<String>() {};
+        return postAccountsToDataBaseRequestCreation(accountHeaderDTO).bodyToMono(localVarReturnType);
+    }
+
+    /**
+     * Post accounts to the database
+     * Post accounts to the database
+     * <p><b>200</b> - OK
+     * @param accountHeaderDTO The accountHeaderDTO parameter
+     * @return ResponseEntity&lt;String&gt;
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<ResponseEntity<String>> postAccountsToDataBaseWithHttpInfo(List<AccountHeaderDTO> accountHeaderDTO) throws WebClientResponseException {
+        ParameterizedTypeReference<String> localVarReturnType = new ParameterizedTypeReference<String>() {};
+        return postAccountsToDataBaseRequestCreation(accountHeaderDTO).toEntity(localVarReturnType);
+    }
+
+    /**
+     * Post accounts to the database
+     * Post accounts to the database
+     * <p><b>200</b> - OK
+     * @param accountHeaderDTO The accountHeaderDTO parameter
+     * @return ResponseSpec
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public ResponseSpec postAccountsToDataBaseWithResponseSpec(List<AccountHeaderDTO> accountHeaderDTO) throws WebClientResponseException {
+        return postAccountsToDataBaseRequestCreation(accountHeaderDTO);
     }
 }

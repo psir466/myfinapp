@@ -4,7 +4,7 @@ OpenAPI definition
 
 - API version: v0
 
-- Build date: 2025-03-08T19:30:38.128453200+01:00[Europe/Paris]
+- Build date: 2025-03-15T16:56:00.367694300+01:00[Europe/Paris]
 
 - Generator version: 7.12.0
 
@@ -120,6 +120,7 @@ Class | Method | HTTP request | Description
 *ApiApi* | [**getAccountById**](docs/ApiApi.md#getAccountById) | **GET** /api/account/{id} | Get account by id
 *ApiApi* | [**getAllAccount**](docs/ApiApi.md#getAllAccount) | **GET** /api/accounts | Get all the account
 *ApiApi* | [**getSumByDate**](docs/ApiApi.md#getSumByDate) | **GET** /api/accountSumDate/{start}/{end} | Get sum of solde by month and year
+*ApiApi* | [**postAccountsToDataBase**](docs/ApiApi.md#postAccountsToDataBase) | **POST** /api/saveaccounts | Post accounts to the database
 
 
 ## Documentation for Models

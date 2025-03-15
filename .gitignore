@@ -1,33 +1,53 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Compiled output files
+dist/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+target/
+node_modules/
+.angular/
+generated-sources/
 
-### VS Code ###
+# Logs and databases
+*.log
+*.sqlite
+*.dump
+
+# IDE and editor files
+.idea/
 .vscode/
+*.swp
+*.swo
+*.iml
+.DS_Store
+
+# OS generated files
+Thumbs.db
+
+# Dependency directories (if applicable)
+lib/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Maven Specific
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+/target/
+
+# Angular Specific
+/coverage/
+/e2e/
+/src/test.ts
+/src/test.js
+/src/karma.conf.js
+/src/karma.conf.ts
+/package-lock.json
+/yarn.lock
+
+# Optional: Ignore specific files or folders within Angular
+# Example: Ignore a specific component's build output
+# src/app/my-component/dist/

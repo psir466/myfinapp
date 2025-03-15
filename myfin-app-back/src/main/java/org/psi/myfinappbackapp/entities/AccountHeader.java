@@ -37,7 +37,7 @@ public class AccountHeader {
 	
 	//orphanRemoval (Important!):  Using orphanRemoval = true is highly recommended to prevent orphaned records in your database.
 	
-	@OneToMany(mappedBy = "header", fetch = FetchType.LAZY ,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "accountLineId.header", fetch = FetchType.LAZY ,cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AccountLine> accountLines = new ArrayList<>();
 	
 	
@@ -66,12 +66,12 @@ public class AccountHeader {
 	
     public void addAccountLine(AccountLine accountLine) {
         this.accountLines.add(accountLine);
-        accountLine.setHeader(this); // Maintain consistency on both sides
+        accountLine.getAccountLineId().setHeader(this); // Maintain consistency on both sides
     }
 
     public void removeAccountLine(AccountLine accountLine) {
     	this.accountLines.remove(accountLine);
-        accountLine.setHeader(null); // Important: Clear the association
+        accountLine.getAccountLineId().setHeader(null); // Important: Clear the association
     }
 
 	public void removeAllAccountLine() {
@@ -85,7 +85,7 @@ public class AccountHeader {
 
 		this.accountLines.forEach(l ->{
 
-			l.setHeader(null);
+			l.getAccountLineId().setHeader(null);
 
 		});	
 

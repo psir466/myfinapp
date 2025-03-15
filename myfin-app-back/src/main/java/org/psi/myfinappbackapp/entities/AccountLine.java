@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.psi.myfinappbackapp.util.AmountOfMoney;
 
 import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -13,22 +14,24 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class AccountLine {
 	
-	@Id
-	private LocalDate date;
+	
+
+	@EmbeddedId
+	private AccountLineId accountLineId;
+
 	
 	@Embedded
 	private AmountOfMoney solde;
 	
-    @ManyToOne
-    private AccountHeader header;
 
-	public LocalDate getDate() {
-		return date;
+	public AccountLineId getAccountLineId() {
+		return accountLineId;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setAccountLineId(AccountLineId accountLineId) {
+		this.accountLineId = accountLineId;
 	}
+    
 
 	public AmountOfMoney getSolde() {
 		return solde;
@@ -40,35 +43,16 @@ public class AccountLine {
 	
 	
 
-	public AccountHeader getHeader() {
-		return header;
-	}
-
-	public void setHeader(AccountHeader header) {
-		this.header = header;
-	}
-
+	
 	public AccountLine() {
 		super();
 	}
 
-	public AccountLine(LocalDate date, AmountOfMoney solde) {
-		super();
-		this.date = date;
-		this.solde = solde;
-	}
 	
-	
-	public AccountLine(LocalDate date, AmountOfMoney solde, AccountHeader header) {
-		super();
-		this.date = date;
-		this.solde = solde;
-		this.header = header;
-	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(date, header, solde);
+		return Objects.hash(accountLineId, solde);
 	}
 
 	@Override
@@ -80,13 +64,13 @@ public class AccountLine {
 		if (getClass() != obj.getClass())
 			return false;
 		AccountLine other = (AccountLine) obj;
-		return Objects.equals(date, other.date) && Objects.equals(header, other.header)
+		return Objects.equals(accountLineId, other.accountLineId) 
 				&& Objects.equals(solde, other.solde);
 	}
 
 	@Override
 	public String toString() {
-		return "AccountLine [date=" + date + ", solde=" + solde + ", header=" + header + "]";
+		return "AccountLine [date=" + accountLineId.getDate() + ", solde=" + solde + ", header=" + accountLineId.getHeader() + "]";
 	}
 
 

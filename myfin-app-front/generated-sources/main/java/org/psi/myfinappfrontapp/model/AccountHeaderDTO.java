@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   AccountHeaderDTO.JSON_PROPERTY_ID,
   AccountHeaderDTO.JSON_PROPERTY_NAME
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-08T19:30:38.128453200+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-15T16:56:00.367694300+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
 public class AccountHeaderDTO implements Serializable {
   private static final long serialVersionUID = 1L;
 

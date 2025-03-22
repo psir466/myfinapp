@@ -32,9 +32,9 @@ public class AddBDForTest {
 	
 	public void deleteAll() {
 
-		List<AccountHeader> acall = accountHeaderRepository.findAll();
+		/*List<AccountHeader> acall = accountHeaderRepository.findAll();*/
 
-		acall.stream().forEach(ac ->{
+		/*acall.stream().forEach(ac ->{
 
 			System.out.print("***************** remove : " + ac.getId());
 
@@ -42,7 +42,9 @@ public class AddBDForTest {
 
 			ac.removeAllAccountLine();
 
-		});
+		});*/
+
+		System.out.print("Delete all***********************" );
 
 		accountHeaderRepository.deleteAll();
 

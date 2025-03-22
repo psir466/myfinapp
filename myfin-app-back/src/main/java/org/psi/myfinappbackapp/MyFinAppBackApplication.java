@@ -1,6 +1,5 @@
 package org.psi.myfinappbackapp;
 
-import org.psi.myfinappbackapp.repository.AccountHeaderRepository;
 import org.psi.myfinappbackapp.util.AddBDForTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,11 +22,11 @@ public class MyFinAppBackApplication implements CommandLineRunner {
 
 		addBDForTest.deleteAll();
 
-		addBDForTest.addBD();
+		//addBDForTest.addBD();
 
 		addBDForTest.readAcc();
 		
-		addBDForTest.testSum();
+		//addBDForTest.testSum();
 
 	}
 

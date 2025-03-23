@@ -1,4 +1,13 @@
-  <ul>
+
+
+<input type="file" multiple (change)="onFileSelected($event)" />
+
+
+<button (click)="uploadFiles()">Upload</button>
+
+
+
+<ul>
     @for (account of accounts; track account.id){
     <li>
       {{ account.id }}

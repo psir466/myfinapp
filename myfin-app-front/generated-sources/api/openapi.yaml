@@ -4,101 +4,21 @@ info:
   version: v0
 servers:
 - description: Generated server url
-  url: http://localhost:8080
+  url: http://localhost:8200
 tags:
-- description: Operations related to accounts
+- description: Operations related to reload data base account
   name: Api
 paths:
-  /api/account/{id}:
-    get:
-      description: Retrieves an account by its id
-      operationId: getAccountById
-      parameters:
-      - explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/AccountHeaderDTO'
-          description: OK
-      summary: Get account by id
-      tags:
-      - Api
-      x-accepts:
-      - '*/*'
-  /api/accounts:
-    get:
-      description: Retrieves all the account
-      operationId: getAllAccount
-      responses:
-        "200":
-          content:
-            '*/*':
-              schema:
-                items:
-                  $ref: '#/components/schemas/AccountHeaderDTO'
-                type: array
-          description: OK
-      summary: Get all the account
-      tags:
-      - Api
-      x-accepts:
-      - '*/*'
-  /api/accountSumDate/{start}/{end}:
-    get:
-      description: Retrieves sum of solde of all accounts by month and year
-      operationId: getSumByDate
-      parameters:
-      - explode: false
-        in: path
-        name: start
-        required: true
-        schema:
-          format: date
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: end
-        required: true
-        schema:
-          format: date
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            '*/*':
-              schema:
-                items:
-                  $ref: '#/components/schemas/AccountDateSumDTO'
-                type: array
-          description: OK
-      summary: Get sum of solde by month and year
-      tags:
-      - Api
-      x-accepts:
-      - '*/*'
-  /api/saveaccounts:
+  /api/uploadBase64Files:
     post:
-      description: Post accounts to the database
-      operationId: postAccountsToDataBase
+      operationId: uploadBase64Files
       requestBody:
         content:
           application/json:
             schema:
               items:
-                $ref: '#/components/schemas/AccountHeaderDTO'
+                $ref: '#/components/schemas/FileBase64'
               type: array
-        required: true
       responses:
         "200":
           content:
@@ -106,7 +26,6 @@ paths:
               schema:
                 type: string
           description: OK
-      summary: Post accounts to the database
       tags:
       - Api
       x-content-type: application/json
@@ -114,80 +33,10 @@ paths:
       - '*/*'
 components:
   schemas:
-    AccountDateSumDTO:
+    FileBase64:
       example:
-        cuurency: EUR
-        month: 0
-        year: 1
-        sum: 6.027456183070403
+        base64: base64
       properties:
-        cuurency:
-          enum:
-          - EUR
-          - USD
-          type: string
-        month:
-          format: int32
-          type: integer
-        sum:
-          type: number
-        year:
-          format: int32
-          type: integer
-    AccountHeaderDTO:
-      example:
-        accountType: CTO
-        name: name
-        id: 6
-        accountLines:
-        - date: 2000-01-23
-          solde:
-            amount: 0.8008281904610115
-            currency: EUR
-        - date: 2000-01-23
-          solde:
-            amount: 0.8008281904610115
-            currency: EUR
-      properties:
-        accountLines:
-          items:
-            $ref: '#/components/schemas/AccountLineDTO'
-          type: array
-        accountType:
-          enum:
-          - CTO
-          - PEA
-          - PEAPME
-          - ASSURVIE
-          - EPARGNESALARIALE
-          type: string
-        id:
-          format: int64
-          type: integer
-        name:
-          type: string
-    AccountLineDTO:
-      example:
-        date: 2000-01-23
-        solde:
-          amount: 0.8008281904610115
-          currency: EUR
-      properties:
-        date:
-          format: date
-          type: string
-        solde:
-          $ref: '#/components/schemas/AmountOfMoney'
-    AmountOfMoney:
-      example:
-        amount: 0.8008281904610115
-        currency: EUR
-      properties:
-        amount:
-          type: number
-        currency:
-          enum:
-          - EUR
-          - USD
+        base64:
           type: string
 

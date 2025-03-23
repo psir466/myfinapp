@@ -13,14 +13,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import controller.CustomApiApi;
 import reactor.core.publisher.Mono;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -31,6 +33,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.psi.myfinappbatch.controller.CustomApiApi;
+import org.psi.myfinappbatch.service.DataService;
 import org.psi.myfinappfrontapp.model.AccountHeaderDTO;
 import org.psi.myfinappfrontapp.model.AccountLineDTO;
 import org.psi.myfinappfrontapp.model.AmountOfMoney;
@@ -43,30 +47,70 @@ import org.apache.poi.ss.usermodel.Row;
 //@EnableBatchProcessing (nee pas mettre dans spring boot 3 car sinon le job ne démarre pas au démarrage de l'application )
 public class TaskletBatchConfiguration {
 
+
     @Autowired
     private JobRepository jobRepository;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    
+    @Autowired
+    DataService dataService;
 
-    private CustomApiApi customApiApi = new CustomApiApi();
-
-   
+    private CustomApiApi customApiApi = new CustomApiApi();   
 
     @Bean
     public Tasklet myTasklet() {
         return (contribution, chunkContext) -> {
             System.out.println("Executing my tasklet...");
             
+           
+           /*  FileInputStream file = new FileInputStream("C:\\\\Users\\\\psir1\\\\Documents\\\\Perso\\\\budget\\\\budget2.xlsx");
+
+            FileInputStream file2 = new FileInputStream("C:\\\\Users\\\\psir1\\\\Documents\\\\Perso\\\\budget\\\\budget.xlsx");
+
+            List<FileInputStream> lf = new ArrayList<>();
+
+            lf.add(file);
+            lf.add(file2);*/
+           
             List<AccountHeaderDTO> accountList = new ArrayList<>();
 
-            FileInputStream file = new FileInputStream("C:\\Users\\psir1\\Documents\\Perso\\budget\\budget2.xlsx");
-            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            dataService.getFiles().stream().forEach(f -> {
+
+                try {
+                    processFile(f, accountList);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+
+            });
+
+           
+            System.out.print("****************" + accountList.size());
+
+            System.out.print(accountList.get(0));
+
+            System.out.print(accountList.get(5));
+
+           Mono<String> ms = this.customApiApi.postAccountsToDataBase(accountList);
+
+           ms.subscribe();
            
 
-   
+            System.out.println("Tasklet execution complete.");
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+
+
+    private void processFile(InputStream file, List<AccountHeaderDTO> accountList) throws IOException{
+
+
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
 
         for (int indexSheet = 0; indexSheet < workbook.getNumberOfSheets(); indexSheet++){
 
@@ -142,20 +186,6 @@ public class TaskletBatchConfiguration {
         workbook.close();
         file.close();
 
-            System.out.print("****************" + accountList.size());
-
-            System.out.print(accountList.get(0));
-
-            System.out.print(accountList.get(5));
-
-           Mono<String> ms = this.customApiApi.postAccountsToDataBase(accountList);
-
-           ms.subscribe();
-           
-
-            System.out.println("Tasklet execution complete.");
-            return RepeatStatus.FINISHED;
-        };
     }
 
     private void getaccountName(AccountHeaderDTO account, String cellToString){

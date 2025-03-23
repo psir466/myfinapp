@@ -20,11 +20,11 @@ public class MyFinAppBackApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
 
-		addBDForTest.deleteAll();
+		//addBDForTest.deleteAll();
 
 		//addBDForTest.addBD();
 
-		addBDForTest.readAcc();
+		//addBDForTest.readAcc();
 		
 		//addBDForTest.testSum();
 

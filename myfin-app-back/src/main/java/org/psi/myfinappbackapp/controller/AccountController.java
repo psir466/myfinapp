@@ -82,6 +82,8 @@ public class AccountController {
 
 			System.out.println(body);
 
+			accountService.deleteAll();
+
 			accountService.saveAccountsToDataBase(body);
 
 			return new ResponseEntity<>("OK", HttpStatus.CREATED);

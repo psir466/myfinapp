@@ -1,12 +1,17 @@
 package org.psi.myfinappfrontapp.controller;
 
 import java.time.LocalDate;
+import java.util.Base64;
+import java.util.List;
 
 import org.psi.myfinappfrontapp.custom.CustomApiApi;
-import org.psi.myfinappfrontapp.model.AccountDateSumDTO;
-import org.psi.myfinappfrontapp.model.AccountHeaderDTO;
+import org.psi.myfinappfrontapp.custom.CustomApiApi2;
+import org.psi.myfinappfrontapp.api.model.AccountDateSumDTO;
+import org.psi.myfinappfrontapp.api.model.AccountHeaderDTO;
+import org.psi.myfinappfrontapp.api2.model.FileBase64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +25,10 @@ public class FrontFinanceController {
 	
 	@Autowired
 	CustomApiApi customapiapi;
+
+	@Autowired
+	CustomApiApi2 customapiapi2;
+	
 	
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
@@ -50,5 +59,15 @@ public class FrontFinanceController {
 		
 		
 	}
+
+	@RequestMapping(value = "/uploadBase64Files", method = RequestMethod.POST)
+	public Mono<String> loadFiles(@RequestBody List<FileBase64> list){
+
+	
+		return customapiapi2.uploadBase64Files(list);
+		
+	
+	}
+
 
 }

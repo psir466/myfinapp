@@ -1,10 +1,11 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AccountServiceService } from '../account-service/account-service.service';
-import { Account, AccountLine, AmountOfMoney, AccountDateSum } from '../model/account-model';
+import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64 } from '../model/account-model';
 import { formatDate } from '@angular/common';
 import { animate } from '@angular/animations';
 import { Chart, registerables} from 'chart.js';
 import 'chartjs-adapter-moment';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -21,12 +22,13 @@ Chart.register(...registerables);
 
 export class AccountListComponent implements OnInit{
 
+  selectedFiles: File[] = [];
 	accounts: Account[] = [];
   sumDates: AccountDateSum[] = [];
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
 
-	constructor(private accountService: AccountServiceService){}
+	constructor(private accountService: AccountServiceService, private http:  HttpClient){}
 
 		 ngOnInit(): void {
 
@@ -76,6 +78,11 @@ export class AccountListComponent implements OnInit{
 
       const amounts = data.map((d) => d.sum);
 
+      let minValue = Math.min(...amounts);
+
+
+
+
       this.chart = new Chart(this.myChartCanvas.nativeElement, {
         type: 'line',
         data: {
@@ -98,12 +105,51 @@ export class AccountListComponent implements OnInit{
               },
             },
             y: {
-              beginAtZero: true,
+              beginAtZero: false,
+              min: minValue
             },
           },
         },
       });
     }
+
+    onFileSelected(event: any) {
+      this.selectedFiles = Array.from(event.target.files);
+    }
+
+
+    uploadFiles() {
+
+      const f64: FileBase64[] = [];
+
+      const promises = this.selectedFiles.map((file) => {
+        return new Promise<{ base64: string }>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e: any) => {
+            const base64 = e.target.result.split(',')[1]; // Extract base64 part
+            resolve({ base64: base64 });
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+
+      Promise.all(promises).then((results) => {
+        this.accountService.loadFiles(results).subscribe(
+          (response) => {
+            console.log('Upload successful', response);
+          },
+          (error) => {
+            console.error('Upload failed', error);
+          }
+        );
+      });
+
+    }
+
+
+
+
 
 
 }

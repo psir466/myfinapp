@@ -4,7 +4,7 @@ OpenAPI definition
 
 - API version: v0
 
-- Build date: 2025-03-15T16:56:00.367694300+01:00[Europe/Paris]
+- Build date: 2025-03-23T10:35:28.307467100+01:00[Europe/Paris]
 
 - Generator version: 7.12.0
 
@@ -83,24 +83,24 @@ Please follow the [installation](#installation) instruction and execute the foll
 
 ```java
 
-import org.psi.myfinappfrontapp.*;
-import org.psi.myfinappfrontapp.auth.*;
-import org.psi.myfinappfrontapp.model.*;
-import org.psi.myfinappfrontapp.api.ApiApi;
+import org.psi.myfinappfrontapp.api2.*;
+import org.psi.myfinappfrontapp.api2.auth.*;
+import org.psi.myfinappfrontapp.api2.model.*;
+import org.psi.myfinappfrontapp.api2.api.ApiApi;
 
 public class ApiApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8080");
+        defaultClient.setBasePath("http://localhost:8200");
         
         ApiApi apiInstance = new ApiApi(defaultClient);
-        Long id = 56L; // Long | 
+        List<FileBase64> fileBase64 = Arrays.asList(); // List<FileBase64> | 
         try {
-            AccountHeaderDTO result = apiInstance.getAccountById(id);
+            String result = apiInstance.uploadBase64Files(fileBase64);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ApiApi#getAccountById");
+            System.err.println("Exception when calling ApiApi#uploadBase64Files");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -113,22 +113,16 @@ public class ApiApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost:8080*
+All URIs are relative to *http://localhost:8200*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ApiApi* | [**getAccountById**](docs/ApiApi.md#getAccountById) | **GET** /api/account/{id} | Get account by id
-*ApiApi* | [**getAllAccount**](docs/ApiApi.md#getAllAccount) | **GET** /api/accounts | Get all the account
-*ApiApi* | [**getSumByDate**](docs/ApiApi.md#getSumByDate) | **GET** /api/accountSumDate/{start}/{end} | Get sum of solde by month and year
-*ApiApi* | [**postAccountsToDataBase**](docs/ApiApi.md#postAccountsToDataBase) | **POST** /api/saveaccounts | Post accounts to the database
+*ApiApi* | [**uploadBase64Files**](docs/ApiApi.md#uploadBase64Files) | **POST** /api/uploadBase64Files | 
 
 
 ## Documentation for Models
 
- - [AccountDateSumDTO](docs/AccountDateSumDTO.md)
- - [AccountHeaderDTO](docs/AccountHeaderDTO.md)
- - [AccountLineDTO](docs/AccountLineDTO.md)
- - [AmountOfMoney](docs/AmountOfMoney.md)
+ - [FileBase64](docs/FileBase64.md)
 
 
 <a id="documentation-for-authorization"></a>

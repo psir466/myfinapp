@@ -43,11 +43,22 @@ public class AccountService {
 		return accountLineRepository.getSumByDate(start, end);
 	}
 
+
+	public void deleteAll(){
+
+		
+		System.out.println("*********************DELETE*****************");
+		accountHeaderRepository.deleteAll();
+
+	}
+
 	public void saveAccountsToDataBase(List<AccountHeaderDTO> listAccountDTO) throws Exception{
+
+	
 
 		List<AccountHeader> accounts = accountMapper.mapHeaderList(listAccountDTO);
 
-
+		System.out.println("*********************SAVE*****************");
 		accountHeaderRepository.saveAll(accounts);
 
 

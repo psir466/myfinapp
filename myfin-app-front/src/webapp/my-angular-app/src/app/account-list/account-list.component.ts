@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, inject } from '@angular/core';
 import { AccountServiceService } from '../account-service/account-service.service';
 import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64 } from '../model/account-model';
 import { formatDate } from '@angular/common';
@@ -6,6 +6,7 @@ import { animate } from '@angular/animations';
 import { Chart, registerables} from 'chart.js';
 import 'chartjs-adapter-moment';
 import { HttpClient } from '@angular/common/http';
+import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 
 
@@ -14,7 +15,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-account-list',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './account-list.component.html',
   styleUrl: './account-list.component.css'
 })
@@ -24,44 +25,93 @@ export class AccountListComponent implements OnInit{
 
   selectedFiles: File[] = [];
 	accounts: Account[] = [];
+  accountTypes: string[] = [];
   sumDates: AccountDateSum[] = [];
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
 
-	constructor(private accountService: AccountServiceService, private http:  HttpClient){}
+  startDate = new FormControl('');
+  end = new FormControl('');
+  typeAccount = new FormControl('');
+  endDate = new FormControl('');
+  //private fb = inject(FormBuilder);
+  myForm!: FormGroup;
+
+	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder){}
 
 		 ngOnInit(): void {
 
-				console.log('on est là');
-
-			    this.accountService.getAccounts().subscribe((data) => {
-
-			    	console.log(data);
-
-			    	this.accounts = data;
-
-			    	console.log(this.accounts);
-
-			    });
-
-          let start: string = '2000-01-01';
-
-          let end: string = '2050-01-01';
 
 
-          this.accountService.getSumDate(start, end).subscribe((data) => {
+      this.accountService.getAccountType().subscribe((data) => {
 
-			    	console.log(data);
+        this.accountTypes = data;
 
-			    	this.sumDates = data;
+        this.accountTypes.push('*All');
 
-            this.createChart(this.sumDates);
 
-			    	console.log(this.accounts);
+        console.log(this.accountTypes);
 
-			    });
+        this.myForm = this.fb.group({
+
+          startDate: this.startDate,
+          end: this.end,
+          endDate: this.endDate,
+          typeAccounts:  this.fb.array([]),
+
+         });
+
+
+         this.accountTypes.map((t) => {
+
+          let at = this.fb.group({ name: `${t}`, checked: false })
+
+          this.typeAccounts.push(at);
+
+        });
+
+
+
+         console.log(this.myForm);
+
+
+      });
+
+
+			/*	console.log('on est là');
+
+        this.accountService.getAccounts().subscribe((data) => {
+
+          console.log(data);
+
+          this.accounts = data;
+
+          console.log(this.accounts);
+
+        });
+
+        let start: string = '2000-01-01';
+
+        let end: string = '2050-01-01';
+
+
+        this.accountService.getSumDate(start, end).subscribe((data) => {
+
+          console.log(data);
+
+          this.sumDates = data;
+
+          this.createChart(this.sumDates);
+
+          console.log(this.accounts);
+
+        });*/
 
 	}
+
+  get typeAccounts() {
+    return this.myForm.get('typeAccounts') as FormArray;
+  }
 
 
     createChart(data: AccountDateSum[]): void {
@@ -148,6 +198,42 @@ export class AccountListComponent implements OnInit{
     }
 
 
+    onSubmit() {
+      if (this.myForm.valid) {
+
+
+
+
+
+        const selectTypes = this.typeAccounts.value.filter((v: { checked: any; })=> v.checked);
+
+
+        const selectType: string = selectTypes[0].name;
+
+
+        console.log("**************************" + this.myForm.value.end);
+
+        console.log("**************************" + this.myForm.value.endDate);
+
+        console.log("**************************" + selectType);
+
+        this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
+
+          console.log(data);
+
+          this.sumDates = data;
+
+          if (this.chart) {
+            this.chart.destroy();
+          }
+
+          this.createChart(this.sumDates);
+
+          console.log(this.accounts);
+
+        });
+      }
+    }
 
 
 

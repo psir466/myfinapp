@@ -74,6 +74,35 @@ public class AccountController {
 
 	}
 
+	@GetMapping(value = "/accountByTypeSumDate/{accountType}/{start}/{end}")
+	@Operation(summary = "Get sum of type of solde by month and year", description = "Retrieves sum of solde of all accounts by month and year")
+	public ResponseEntity<List<AccountDateSumDTO>> getTypeSumByDate(@PathVariable("accountType") String accountType, @PathVariable("start") LocalDate start, @PathVariable("end") LocalDate end) {
+
+		List<AccountDateSumDTO> accountsums = accountService.getTypeDateSum(accountType, start, end);
+
+		if (accountsums != null) {
+			return ResponseEntity.ok(accountsums);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
+	}
+
+	
+	@GetMapping(value = "/accountTypes")
+	@Operation(summary = "Get all the accoun types", description = "Retrieves all the account types")
+	public ResponseEntity<List<String>> getAccounTypes() {
+
+		List<String> accountTypes = accountService.getAccountTypes();
+
+		if (accountTypes != null) {
+			return ResponseEntity.ok(accountTypes);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
+	}
+
 	@RequestMapping(value = "/saveaccounts", method = RequestMethod.POST)
 	@Operation(summary = "Post accounts to the database", description = "Post accounts to the database")
 	public ResponseEntity<String> postAccountsToDataBase(@RequestBody List<AccountHeaderDTO> body) {

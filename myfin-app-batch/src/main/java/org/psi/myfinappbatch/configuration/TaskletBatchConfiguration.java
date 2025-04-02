@@ -204,21 +204,21 @@ public class TaskletBatchConfiguration {
         }else if(cellToString.equals("Spirica")){
             account.setAccountType(AccountTypeEnum.ASSURVIE);
         }else if(cellToString.equals("LLD")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.LLD);
         }else if(cellToString.equals("Livret A")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.LIVRETA);
         }else if(cellToString.equals("CEL")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.CEP);
         }else if(cellToString.equals("Compte courant La poste")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.CPTCOURANT);
         }else if(cellToString.equals("Assurance vie Fortunéo")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.ASSURVIE);
         }else if(cellToString.equals("Compte courant Fortuneo")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.CPTCOURANT);
         }else if(cellToString.equals("assurance vie Linxea")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.ASSURVIE);
         }else if(cellToString.equals("prêt immo")){
-            account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
+            account.setAccountType(AccountTypeEnum.PRETIMMO);
         }
 
     }

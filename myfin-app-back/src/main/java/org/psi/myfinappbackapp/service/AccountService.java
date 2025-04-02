@@ -9,6 +9,7 @@ import org.psi.myfinappbackapp.entities.AccountHeader;
 import org.psi.myfinappbackapp.mapper.AccountMapper;
 import org.psi.myfinappbackapp.repository.AccountHeaderRepository;
 import org.psi.myfinappbackapp.repository.AccountLineRepository;
+import org.psi.myfinappbackapp.util.AccountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,12 @@ public class AccountService {
 		return accountLineRepository.getSumByDate(start, end);
 	}
 
+	public List<AccountDateSumDTO> getTypeDateSum(String accountType, LocalDate start, LocalDate end) {
+	
+		return accountHeaderRepository.getSumByAccountTypeAndByDate(AccountType.getAccountType(accountType), start, end);
+	}
+
+
 
 	public void deleteAll(){
 
@@ -62,6 +69,12 @@ public class AccountService {
 		accountHeaderRepository.saveAll(accounts);
 
 
+	}
+
+
+	public List<String> getAccountTypes(){
+
+		return AccountType.getAccountypes();		
 	}
 	
 }

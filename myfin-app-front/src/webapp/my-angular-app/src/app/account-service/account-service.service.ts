@@ -30,6 +30,18 @@ export class AccountServiceService {
   }
 
 
+  getAccountType(): Observable<string[]> {
+
+    return this.http.get<string[]>(`http://localhost:8100/backfront/getAccountTypes`);
+
+  }
+
+
+  getSumDateType(typeAccount :string | null | undefined , start :string | null | undefined, end :string | null | undefined): Observable<AccountDateSum[]> {
+    return this.http.get<AccountDateSum[]>(`http://localhost:8100/backfront/sumdatetype/${typeAccount}/${start}/${end}`);
+
+  }
+
 
 
 }

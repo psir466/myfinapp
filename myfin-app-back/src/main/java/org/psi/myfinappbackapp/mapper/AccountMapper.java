@@ -16,7 +16,6 @@ import org.mapstruct.Named;
 
 
 @Mapper(componentModel = "spring")
-@Component
 public abstract class AccountMapper {
 	
 	public abstract AccountHeaderDTO mapHeaderToDTO(AccountHeader accoutHedaer);

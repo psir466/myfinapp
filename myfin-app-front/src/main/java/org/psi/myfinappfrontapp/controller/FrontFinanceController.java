@@ -70,4 +70,28 @@ public class FrontFinanceController {
 	}
 
 
+	@RequestMapping(value = "/getAccountTypes", method = RequestMethod.GET)
+	public Mono<List<String>> getAccountTtypes(){
+
+	
+		return customapiapi.getAccounTypes();
+		
+	
+	}
+
+	@RequestMapping(value = "/sumdatetype/{type}/{start}/{end}", method = RequestMethod.GET)
+	public Flux<AccountDateSumDTO> getSumByDateType(@PathVariable String type, @PathVariable String start, @PathVariable String end){
+
+		LocalDate localDateStart = LocalDate.parse(start);
+		
+		LocalDate localDateEnd = LocalDate.parse(end);
+
+
+		return customapiapi.getTypeSumByDate(type, localDateStart, localDateEnd);
+		
+		
+	}
+
+
+
 }

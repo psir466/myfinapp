@@ -6,7 +6,8 @@ import java.util.Objects;
 
 import org.psi.myfinappbackapp.util.Currency;
 
-public class AccountDateSumDTO {
+public class 
+AccountDateSumDTO {
 	
 	private Integer year;
 	

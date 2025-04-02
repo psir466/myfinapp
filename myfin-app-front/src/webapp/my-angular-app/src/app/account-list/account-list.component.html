@@ -7,7 +7,41 @@
 
 
 
-<ul>
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+
+
+
+  <label>Start date:</label>
+  <input type="date" formControlName="startDate">
+
+
+  <label>Start date:</label>
+  <input type="date" formControlName="end">
+
+
+  <label>End date2:</label>
+  <input type="date" formControlName="endDate">
+
+  <div formArrayName="typeAccounts">
+
+    @for (accountType of typeAccounts.controls; track $index) {
+
+      <div [formGroupName]="$index">
+        <label>
+          <input type="checkbox" formControlName="checked">
+          {{ accountType.get('name')?.value }}
+        </label>
+      </div>
+
+    }
+
+  </div>
+
+  <button type="submit">Submit</button>
+</form>
+
+
+<!--<ul>
     @for (account of accounts; track account.id){
     <li>
       {{ account.id }}
@@ -23,22 +57,22 @@
 
     </li>
     }
-  </ul>
+</ul>
 
 
-  <ul>
+<ul>
 
-    @for (sumDate of sumDates; track sumDate.year || sumDate.month){
+  @for (sumDate of sumDates; track sumDate.year || sumDate.month){
 
-        <li>
-          {{sumDate.cuurency}} {{sumDate.month}} {{sumDate.sum}} {{sumDate.year}}
-        </li>
+      <li>
+        {{sumDate.cuurency}} {{sumDate.month}} {{sumDate.sum}} {{sumDate.year}}
+      </li>
 
-    }
+  }
 
-  </ul>
+</ul>-->
 
-  <div>marche</div>
+<div>marche</div>
 
 
-  <canvas #myChart></canvas>
+<canvas #myChart></canvas>

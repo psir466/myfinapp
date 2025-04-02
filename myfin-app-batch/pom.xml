@@ -89,7 +89,7 @@
                      
                      <!-- Reference to the Petstore spec -->
                      <inputSpec>
-                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-batch/src/main/resources/myfinappswaggerV3.json
+                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-batch/src/main/resources/myfinappswaggerV4.json
                      </inputSpec>
 
                      <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>

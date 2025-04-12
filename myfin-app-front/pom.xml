@@ -180,7 +180,7 @@
                      
                      <!-- Reference to the Petstore spec -->
                      <inputSpec>
-                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-front/src/main/resources/myfinappbatchswaggerV0.json
+                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-front/src/main/resources/myfinappbatchswaggerV1.json
                      </inputSpec>
 
                      <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>

@@ -19,6 +19,7 @@ paths:
               items:
                 $ref: '#/components/schemas/FileBase64'
               type: array
+        required: true
       responses:
         "200":
           content:

@@ -14,6 +14,8 @@ import org.psi.myfinappbatch.model.FileBase64;
 import org.psi.myfinappbatch.service.DataService;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +45,7 @@ public class BatchController {
     DataService dataService;
 
     @RequestMapping(value = "/uploadBase64Files", method = RequestMethod.POST)
-    public String uploadBase64Files(@RequestBody List<FileBase64> files) {
+    public ResponseEntity<String> uploadBase64Files(@RequestBody List<FileBase64> files) {
 
         List<InputStream> list = new ArrayList<>();
 
@@ -66,11 +68,11 @@ public class BatchController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error during tasklet execution";
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during tasklet execution"); // Return 500 for error;
         }
 
 
-        return "Upload successful!";
+        return ResponseEntity.ok("Upload successful!");
     }
 
 }

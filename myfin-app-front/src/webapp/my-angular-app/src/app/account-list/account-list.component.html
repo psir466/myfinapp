@@ -28,7 +28,7 @@
 
       <div [formGroupName]="$index">
         <label>
-          <input type="checkbox" formControlName="checked">
+          <input type="checkbox" formControlName="checked" (change)="onCheckboxChange(accountType.get('name')?.value)" />
           {{ accountType.get('name')?.value }}
         </label>
       </div>
@@ -74,5 +74,6 @@
 
 <div>marche</div>
 
-
-<canvas #myChart></canvas>
+<div id="chart">
+  <canvas  #myChart></canvas>
+</div>

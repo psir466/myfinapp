@@ -25,7 +25,7 @@ export class AccountServiceService {
 
   loadFiles(files64 :FileBase64[]): Observable<string> {
 
-    return this.http.post<string>(`http://localhost:8100/backfront/uploadBase64Files`, files64);
+    return this.http.post(`http://localhost:8100/backfront/uploadBase64Files`, files64, {responseType: 'text'});
 
   }
 

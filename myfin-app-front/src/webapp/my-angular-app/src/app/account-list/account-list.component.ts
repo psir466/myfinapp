@@ -7,6 +7,7 @@ import { Chart, registerables} from 'chart.js';
 import 'chartjs-adapter-moment';
 import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 
@@ -30,14 +31,15 @@ export class AccountListComponent implements OnInit{
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
 
-  startDate = new FormControl('');
-  end = new FormControl('');
+  // problème avec startdate systemantiqument non remplie bien que saisie !!!!!!!!!!!!!!!!!!!????????????????????????????????
+  startDate = new FormControl('2020-01-01');
+  end = new FormControl('2020-01-01');
   typeAccount = new FormControl('');
-  endDate = new FormControl('');
+  endDate = new FormControl('2030-01-01');
   //private fb = inject(FormBuilder);
   myForm!: FormGroup;
 
-	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder){}
+	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar){}
 
 		 ngOnInit(): void {
 
@@ -147,6 +149,7 @@ export class AccountListComponent implements OnInit{
           ],
         },
         options: {
+          responsive: true, // Enable responsiveness
           scales: {
             x: {
               type: 'time',
@@ -184,24 +187,47 @@ export class AccountListComponent implements OnInit{
         });
       });
 
-      Promise.all(promises).then((results) => {
-        this.accountService.loadFiles(results).subscribe(
-          (response) => {
-            console.log('Upload successful', response);
-          },
-          (error) => {
-            console.error('Upload failed', error);
-          }
-        );
-      });
+      Promise.all(promises)
+        .then((results) => {
+          this.accountService.loadFiles(results).subscribe({
+            next: (response) => {
+              this.snackBar.open('Data loaded successfully!', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom',
+                panelClass: ['success-snackbar'],
+              });
+            },
+            error: (error) => {
+              console.error('Error from accountService:', error);
+              let errorMessage = 'Error loading data. Please try again.';
+              if (error && error.message) {
+                errorMessage = `Error: ${error.message}`; // More specific error
+              }
+              this.snackBar.open(errorMessage, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom',
+                panelClass: ['error-snackbar'],
+              });
+            },
+          });
+        })
+        .catch((promiseError) => {
+          console.error('Error in Promise.all:', promiseError);
+          this.snackBar.open('An unexpected error occurred.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['error-snackbar'],
+          });
+        });
 
     }
 
 
     onSubmit() {
       if (this.myForm.valid) {
-
-
 
 
 
@@ -217,25 +243,66 @@ export class AccountListComponent implements OnInit{
 
         console.log("**************************" + selectType);
 
-        this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
 
-          console.log(data);
+        if(selectType == '*All'){
 
-          this.sumDates = data;
+            this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
 
-          if (this.chart) {
-            this.chart.destroy();
-          }
+              console.log(data);
 
-          this.createChart(this.sumDates);
+              this.sumDates = data;
 
-          console.log(this.accounts);
+              if (this.chart) {
+                this.chart.destroy();
+              }
 
-        });
+              this.createChart(this.sumDates);
+
+              console.log(this.accounts);
+
+          });
+
+        }else{
+
+
+            this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
+
+              console.log(data);
+
+              this.sumDates = data;
+
+              if (this.chart) {
+                this.chart.destroy();
+              }
+
+              this.createChart(this.sumDates);
+
+              console.log(this.accounts);
+
+          });
+        }
       }
     }
 
 
+    onCheckboxChange(name: string) {
+
+  /*    console.log("box : " + name)
+
+      this.typeAccounts.value.forEach((element: { name: string; checked: boolean; }) => {
+
+
+        console.log("boxlec : " + element)
+
+        if(element.name != name){
+          console.log("boxlec2 : " + element);
+          (element as unknown as FormGroup).checked = false;
+        }
+
+      });*/
+
+
+  }
 
 
 }

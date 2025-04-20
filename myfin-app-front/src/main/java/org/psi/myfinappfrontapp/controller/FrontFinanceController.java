@@ -8,6 +8,8 @@ import org.psi.myfinappfrontapp.custom.CustomApiApi;
 import org.psi.myfinappfrontapp.custom.CustomApiApi2;
 import org.psi.myfinappfrontapp.api.model.AccountDateSumDTO;
 import org.psi.myfinappfrontapp.api.model.AccountHeaderDTO;
+import org.psi.myfinappfrontapp.api.model.MarketDTO;
+import org.psi.myfinappfrontapp.api.model.MarketDTODetail;
 import org.psi.myfinappfrontapp.api2.model.FileBase64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,20 @@ public class FrontFinanceController {
 	CustomApiApi2 customapiapi2;
 	
 	
+
+	@RequestMapping(value = "/markets/{code}/{start}/{end}", method = RequestMethod.GET)
+	public List<MarketDTODetail> getMarketByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end){
+			
+		LocalDate localDateStart = LocalDate.parse(start);
+		
+		LocalDate localDateEnd = LocalDate.parse(end);
+
+		MarketDTO marketDTO = customapiapi.getMarketByCode(code, localDateStart, localDateEnd).block();
+
+		return marketDTO.getMarkets();
+		
+	}
+
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
 	public Flux<AccountHeaderDTO> getAllAccount(){

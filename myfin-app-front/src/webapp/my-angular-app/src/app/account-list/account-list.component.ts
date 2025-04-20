@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, inject } from '@angular/core';
 import { AccountServiceService } from '../account-service/account-service.service';
-import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64 } from '../model/account-model';
+import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
 import { formatDate } from '@angular/common';
 import { animate } from '@angular/animations';
 import { Chart, registerables} from 'chart.js';
@@ -8,7 +8,7 @@ import 'chartjs-adapter-moment';
 import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { forkJoin } from 'rxjs';
 
 
 Chart.register(...registerables);
@@ -28,6 +28,7 @@ export class AccountListComponent implements OnInit{
 	accounts: Account[] = [];
   accountTypes: string[] = [];
   sumDates: AccountDateSum[] = [];
+  marketIndices: Market[] = [];
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
 
@@ -66,7 +67,7 @@ export class AccountListComponent implements OnInit{
 
          this.accountTypes.map((t) => {
 
-          let at = this.fb.group({ name: `${t}`, checked: false })
+          let at = this.fb.group({ name: `${t}`, checked: false });
 
           this.typeAccounts.push(at);
 
@@ -116,7 +117,7 @@ export class AccountListComponent implements OnInit{
   }
 
 
-    createChart(data: AccountDateSum[]): void {
+    createChart(data: AccountDateSum[], dataMarket: Market[]): void {
 
 
       const dates = data.map((d) => {
@@ -125,13 +126,15 @@ export class AccountListComponent implements OnInit{
 
         console.log(dateStr);
 
-        return new Date(dateStr)});
+        return new Date(dateStr)
+      });
 
 
       const amounts = data.map((d) => d.sum);
+      const marketIndices = dataMarket.map((m) => m.indicePoint);
 
       let minValue = Math.min(...amounts);
-
+      let minValueMarket = Math.min(...marketIndices);
 
 
 
@@ -145,7 +148,15 @@ export class AccountListComponent implements OnInit{
               data: amounts,
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.1,
+              yAxisID: 'y'
             },
+            {
+              label: 'Indes over Time',
+              data: marketIndices,
+              borderColor: 'rgb(211, 95, 17)',
+              tension: 0.1,
+              yAxisID: 'yMarket'
+            }
           ],
         },
         options: {
@@ -158,8 +169,14 @@ export class AccountListComponent implements OnInit{
               },
             },
             y: {
+              position: 'left',
               beginAtZero: false,
               min: minValue
+            },
+            yMarket: {
+              position: 'right',
+              beginAtZero: false,
+              min: minValueMarket
             },
           },
         },
@@ -246,7 +263,51 @@ export class AccountListComponent implements OnInit{
 
         if(selectType == '*All'){
 
-            this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
+
+
+          forkJoin({
+
+              dataAccount: this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate),
+              dataMarket: this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate)
+
+          }).subscribe(
+
+            {
+              next: (results) => {
+                // 'results' sera un objet de la forme :
+                // { dataApi1: ResultatDeLAPI1, dataApi2: ResultatDeLAPI2 }
+                console.log('Résultats des deux APIs:', results);
+                // Ici, tu peux manipuler les données combinées et continuer ton traitement
+
+
+                this.sumDates = results.dataAccount;
+                this.marketIndices = results.dataMarket;
+
+
+
+                if (this.chart) {
+                  this.chart.destroy();
+                }
+
+                this.createChart(this.sumDates, this.marketIndices);
+
+
+
+              },
+              error: (error) => {
+                console.error('Erreur lors de l\'appel à l\'une des APIs:', error);
+                // Gestion des erreurs si l'un des appels échoue
+              },
+              complete: () => {
+                console.log('Les deux appels d\'API sont terminés.');
+                // Actions à effectuer une fois que tout est terminé (optionnel)
+              }
+            }
+
+          );
+
+
+          /*  this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
 
               console.log(data);
 
@@ -260,12 +321,53 @@ export class AccountListComponent implements OnInit{
 
               console.log(this.accounts);
 
-          });
+          });*/
 
         }else{
 
 
-            this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
+          forkJoin({
+
+            dataAccount: this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate),
+            dataMarket: this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate)
+
+        }).subscribe(
+
+          {
+            next: (results) => {
+              // 'results' sera un objet de la forme :
+              // { dataApi1: ResultatDeLAPI1, dataApi2: ResultatDeLAPI2 }
+              console.log('Résultats des deux APIs:', results);
+              // Ici, tu peux manipuler les données combinées et continuer ton traitement
+
+
+              this.sumDates = results.dataAccount;
+              this.marketIndices = results.dataMarket;
+
+              if (this.chart) {
+                this.chart.destroy();
+              }
+
+              this.createChart(this.sumDates, this.marketIndices);
+
+
+
+            },
+            error: (error) => {
+              console.error('Erreur lors de l\'appel à l\'une des APIs:', error);
+              // Gestion des erreurs si l'un des appels échoue
+            },
+            complete: () => {
+              console.log('Les deux appels d\'API sont terminés.');
+              // Actions à effectuer une fois que tout est terminé (optionnel)
+            }
+          }
+
+        );
+
+
+
+           /* this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
 
               console.log(data);
 
@@ -279,7 +381,10 @@ export class AccountListComponent implements OnInit{
 
               console.log(this.accounts);
 
-          });
+          });*/
+
+
+
         }
       }
     }
@@ -302,7 +407,29 @@ export class AccountListComponent implements OnInit{
       });*/
 
 
-  }
 
+          this.typeAccounts.controls.forEach(c => {
+
+
+            if(c.get('name')?.value !=name){
+
+              c.get('checked')?.setValue(false);
+
+            }
+
+
+          });
+
+
+
+      }
+
+      getMarketIndiceWithSum(sumDate: AccountDateSum[], indiceDate: Market[]){
+
+
+        
+
+
+      }
 
 }

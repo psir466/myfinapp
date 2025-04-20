@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64 } from '../model/account-model';
+import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +42,10 @@ export class AccountServiceService {
 
   }
 
+  getMarket(code :string | null | undefined , start :string | null | undefined, end :string | null | undefined): Observable<Market[]> {
+    return this.http.get<Market[]>(`http://localhost:8100/backfront/markets/${code}/${start}/${end}`);
+
+  }
 
 
 }

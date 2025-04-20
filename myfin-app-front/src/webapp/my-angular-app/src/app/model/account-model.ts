@@ -30,5 +30,10 @@ export interface FileBase64{
 	base64: string
 }
 
+export interface Market{
+	indicePoint: number;
+  year: number;
+  month: number
+}
 
 

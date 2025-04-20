@@ -121,8 +121,10 @@ public class TaskletBatchConfiguration {
             System.out.println("*******************" + sheet.getSheetName().substring(2, 4) + "*********************");*/
 
 
+         
             String year = sheet.getSheetName().substring(4, sheet.getSheetName().length());
             String month = sheet.getSheetName().substring(2, 4);
+            String day = sheet.getSheetName().substring(0, 2);
 
 
             for (int rowIndex = 0; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -171,7 +173,8 @@ public class TaskletBatchConfiguration {
                                 amountOfMoney.setCurrency(CurrencyEnum.EUR);
                                 amountOfMoney.setAmount(BigDecimal.valueOf(cell.getNumericCellValue()));
                                 accountLineDTO.setSolde(amountOfMoney);
-                                accountLineDTO.setDate(LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), 1));
+                                //accountLineDTO.setDate(LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), 1));
+                                accountLineDTO.setDate(LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day)));
                                 account.getAccountLines().add(accountLineDTO);
                             }
                                 

@@ -1,79 +1,54 @@
+<div class="container">
 
+  <section class="upload-section">
+    <h2>Upload de fichiers</h2>
+    <input type="file" multiple (change)="onFileSelected($event)" />
+    <button (click)="uploadFiles()">Upload</button>
+  </section>
 
-<input type="file" multiple (change)="onFileSelected($event)" />
+  <section class="form-section">
+    <h2>Formulaire de données</h2>
+    <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
 
-
-<button (click)="uploadFiles()">Upload</button>
-
-
-
-<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-
-
-
-  <label>Start date:</label>
-  <input type="date" formControlName="startDate">
-
-
-  <label>Start date:</label>
-  <input type="date" formControlName="end">
-
-
-  <label>End date2:</label>
-  <input type="date" formControlName="endDate">
-
-  <div formArrayName="typeAccounts"> 
-
-    @for (accountType of typeAccounts.controls; track $index) {
-
-      <div [formGroupName]="$index">
-        <label>
-          <input type="checkbox" formControlName="checked" (change)="onCheckboxChange(accountType.get('name')?.value)" />
-          {{ accountType.get('name')?.value }}
-        </label>
+      <div class="form-group">
+        <label>Start date:</label>
+        <input type="date" formControlName="startDate">
       </div>
 
-    }
+      <div class="form-group">
+        <label>End date:</label>
+        <input type="date" formControlName="end">
+      </div>
 
-  </div>
+      <div class="form-group">
+        <label>End date 2:</label>
+        <input type="date" formControlName="endDate">
+      </div>
 
-  <button type="submit">Submit</button>
-</form>
+      <div class="form-group">
+        <label>Type de comptes:</label>
+        <div formArrayName="typeAccounts" class="typeAccounts">
+          @for (accountType of typeAccounts.controls; track $index) {
+            <div [formGroupName]="$index">
+              <label>
+                <input type="checkbox" formControlName="checked" (change)="onCheckboxChange(accountType.get('name')?.value)" />
+                {{ accountType.get('name')?.value }}
+              </label>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <section class="chart-section">
+    <h2>Graphique</h2>
+    <div id="chart">
+      <canvas #myChart></canvas>
+    </div>
+  </section>
 
 
-<!--<ul>
-    @for (account of accounts; track account.id){
-    <li>
-      {{ account.id }}
-
-      	@for (accountline of account.accountLines; track accountline.date){
-
-      		<li>
-      			{{ accountline.date }}
-      		</li>
-
-
-      	}
-
-    </li>
-    }
-</ul>
-
-
-<ul>
-
-  @for (sumDate of sumDates; track sumDate.year || sumDate.month){
-
-      <li>
-        {{sumDate.cuurency}} {{sumDate.month}} {{sumDate.sum}} {{sumDate.year}}
-      </li>
-
-  }
-
-</ul>-->
-
-<div>marche</div>
-
-<div id="chart">
-  <canvas  #myChart></canvas>
 </div>

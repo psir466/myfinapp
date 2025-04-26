@@ -1,5 +1,210 @@
+/* account-list.component.css */
+
+:host {
+  display: block;
+  font-family: sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: 15px;
+  padding: 15px;
+  max-width: 2560px; /* Increased max-width */
+  margin: 0 auto;
+}
+
+/* Medium Screens (Tablets/Smaller Desktops) */
+@media (min-width: 768px) and (max-width: 1199px) { /* Adjusted max-width */
+  .container {
+    grid-template-columns: 0.6fr 1.4fr;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+      "upload upload"
+      "form chart"
+      "form chart"
+      "misc misc";
+  }
+
+  .upload-section {
+    grid-area: upload;
+  }
+
+  .form-section {
+    grid-area: form;
+  }
+
+  .chart-section {
+    grid-area: chart;
+  }
+
+  .misc-section {
+    grid-area: misc;
+  }
+}
+
+/* Large Screens (Larger Desktops) */
+@media (min-width: 1200px) { /* New breakpoint */
+  .container {
+    grid-template-columns: 0.4fr 1.6fr; /* Even more space for the chart */
+    grid-template-rows: auto 1fr auto; /* Simplified rows */
+    grid-template-areas:
+      "upload chart" /* Upload and chart side-by-side */
+      "form chart" /* Form and chart taking most space */
+      "misc chart"; /* Misc section too */
+  }
+
+  .upload-section {
+    grid-area: upload;
+  }
+
+  .form-section {
+    grid-area: form;
+  }
+
+  .chart-section {
+    grid-area: chart;
+  }
+
+  .misc-section {
+    grid-area: misc;
+  }
+
+
+}
+
+
+/* Sections */
+.upload-section,
+.form-section,
+.chart-section,
+.misc-section {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Upload */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input[type="file"] {
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box; /* Ajout important */
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3e8e41;
+}
+
+/* Formulaire */
+.form-section {
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}
+
+label {
+  margin-bottom: 3px;
+  font-weight: bold;
+  display: block;
+}
+
+input[type="date"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box; /* Ajout important */
+}
+
+.typeAccounts {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+.typeAccounts div {
+  margin-bottom: 3px;
+}
+
+.typeAccounts label {
+  display: flex;
+  align-items: center;
+}
+
+.typeAccounts input[type="checkbox"] {
+  margin-right: 3px;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.chart-section {
+  width: 100%;
+  display: flex; /* Use Flexbox */
+  flex-direction: column; /* Stack elements vertically */
+}
 
 #chart {
-  width: 50%; /* Relative width */
-  height: 50%; /* Fixed height */
+  width: 100%;
+  height: 100%; /* Important: Take full height of section */
+  position: relative; /* For potential positioning of elements within */
 }
+
+#myChart {
+  width: 100%; /* Canvas takes full width */
+  height: 100%; /* Canvas takes full height */
+  display: block; /* Ensure canvas behaves as a block element */
+}
+
+
+/* Divers */
+.misc-section {
+  text-align: center;
+}
+
+

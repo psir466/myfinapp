@@ -8,6 +8,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -57,6 +58,9 @@ public class TaskletBatchConfiguration {
     @Autowired
     DataService dataService;
 
+    @Value("${app_base_ref_gateway_back_service}")
+    private String baseRefGatewayBackService;
+
     private CustomApiApi customApiApi = new CustomApiApi();   
 
     @Bean
@@ -94,6 +98,16 @@ public class TaskletBatchConfiguration {
             System.out.print(accountList.get(0));
 
             System.out.print(accountList.get(5));
+
+            /*************************** */
+
+            /* le post construct ne marche pas !!!!!! */
+
+            this.customApiApi.getApiClient().setBasePath(baseRefGatewayBackService);
+
+            /*************************** */
+
+            System.out.print("****************" + this.customApiApi.getApiClient().getBasePath() + "****************");
 
            Mono<String> ms = this.customApiApi.postAccountsToDataBase(accountList);
 

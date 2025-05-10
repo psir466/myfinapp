@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.psi.myfinappfrontapp.custom.CustomApiApi;
 import org.psi.myfinappfrontapp.custom.CustomApiApi2;
+import org.slf4j.LoggerFactory;
 import org.psi.myfinappfrontapp.api.model.AccountDateSumDTO;
 import org.psi.myfinappfrontapp.api.model.AccountHeaderDTO;
 import org.psi.myfinappfrontapp.api.model.MarketDTO;
@@ -20,8 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/backfront")
@@ -32,6 +37,8 @@ public class FrontFinanceController {
 
 	@Autowired
 	CustomApiApi2 customapiapi2;
+
+	private static final Logger logger = LoggerFactory.getLogger(FrontFinanceController.class);
 	
 	
 
@@ -41,6 +48,8 @@ public class FrontFinanceController {
 		LocalDate localDateStart = LocalDate.parse(start);
 		
 		LocalDate localDateEnd = LocalDate.parse(end);
+
+		logger.info("base ref : " + customapiapi2.getApiClient().getBasePath());
 
 		MarketDTO marketDTO = customapiapi.getMarketByCode(code, localDateStart, localDateEnd).block();
 

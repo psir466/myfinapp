@@ -12,6 +12,8 @@ public class DataService {
 
     private List<InputStream> files;
 
+    private String token;
+
     public List<InputStream> getFiles(){
 
         return this.files;
@@ -21,5 +23,15 @@ public class DataService {
 
         this.files = inputStreams; 
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    
 
 }

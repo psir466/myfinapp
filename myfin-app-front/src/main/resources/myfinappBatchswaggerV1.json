@@ -1,1 +1,56 @@
-{"openapi":"3.1.0","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://localhost:8200","description":"Generated server url"}],"tags":[{"name":"Api","description":"Operations related to reload data base account"}],"paths":{"/api/uploadBase64Files":{"post":{"tags":["Api"],"operationId":"uploadBase64Files","requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/FileBase64"}}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"string"}}}}}}}},"components":{"schemas":{"FileBase64":{"type":"object","properties":{"base64":{"type":"string"}}}}}}
+{
+  "openapi": "3.1.0",
+  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "servers": [
+    { "url": "http://localhost:8200", "description": "Generated server url" }
+  ],
+  "tags": [
+    {
+      "name": "Api",
+      "description": "Operations related to reload data base account"
+    }
+  ],
+  "paths": {
+    "/api/uploadBase64Files/{token}": {
+      "post": {
+        "tags": ["Api"],
+        "operationId": "uploadBase64Files",
+         "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/FileBase64" }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FileBase64": {
+        "type": "object",
+        "properties": { "base64": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class CustomApiApi2 extends ApiApi{
 
-    @Value("${app_base_ref_gateway_batch_service}")
+    @Value("${BASEREFGATE_BATCHSERVICE:http://localhost:8889/MYFINAPPBATCHSERVICE}")
     private String baseRefGatewayBatchService;
 
     @PostConstruct

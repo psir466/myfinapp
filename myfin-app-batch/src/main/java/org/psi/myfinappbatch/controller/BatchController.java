@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.psi.myfinappbatch.configuration.TaskletBatchConfiguration;
 import org.psi.myfinappbatch.model.FileBase64;
@@ -16,12 +17,16 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.nio.file.Files;
@@ -44,8 +49,8 @@ public class BatchController {
     @Autowired
     DataService dataService;
 
-    @RequestMapping(value = "/uploadBase64Files", method = RequestMethod.POST)
-    public ResponseEntity<String> uploadBase64Files(@RequestBody List<FileBase64> files) {
+    @RequestMapping(value = "/uploadBase64Files/{token}", method = RequestMethod.POST)
+    public ResponseEntity<String> uploadBase64Files(@PathVariable("token") Optional<String> token, @RequestBody List<FileBase64> files ) {
 
         List<InputStream> list = new ArrayList<>();
 
@@ -61,6 +66,14 @@ public class BatchController {
 
 
         try {
+
+            if(token.isPresent()){
+
+                dataService.setToken(token.get());
+            }else{
+
+                System.out.println("pas de tokeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeen");
+            }
             
             dataService.setFiles(list);
 

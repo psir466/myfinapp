@@ -8,6 +8,7 @@ import org.psi.myfinappfrontapp.api.api.ApiApi;
 import org.psi.myfinappfrontapp.api.model.AccountHeaderDTO;
 import org.psi.myfinappfrontapp.api.model.AccountLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,6 +23,9 @@ import reactor.core.publisher.Mono;
 
 	@SpringBootApplication
 	public class MyFinAppFrontApplication implements CommandLineRunner{
+
+		@Value("${APP_TEST:testNonTrouve}")
+    	private String monTest;
 
 		
 		/*@Bean
@@ -38,6 +42,16 @@ import reactor.core.publisher.Mono;
 		@Override
 		public void run(String... args) throws Exception {
 			// TODO Auto-generated method stub
+
+			if(monTest == null){
+
+				System.out.println("monTest est null");
+
+			}else{
+				
+				System.out.println("valur de monTest : " + monTest);
+
+			}
 			
 			ApiApi api = new ApiApi();
 			

@@ -4,7 +4,7 @@ OpenAPI definition
 
 - API version: v0
 
-- Build date: 2025-04-20T13:44:55.446768+02:00[Europe/Paris]
+- Build date: 2025-08-03T18:09:29.721237500+02:00[Europe/Paris]
 
 - Generator version: 7.12.0
 
@@ -95,9 +95,10 @@ public class ApiApiExample {
         defaultClient.setBasePath("http://localhost:8200");
         
         ApiApi apiInstance = new ApiApi(defaultClient);
+        String token = "token_example"; // String | 
         List<FileBase64> fileBase64 = Arrays.asList(); // List<FileBase64> | 
         try {
-            String result = apiInstance.uploadBase64Files(fileBase64);
+            String result = apiInstance.uploadBase64Files(token, fileBase64);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling ApiApi#uploadBase64Files");
@@ -117,7 +118,7 @@ All URIs are relative to *http://localhost:8200*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ApiApi* | [**uploadBase64Files**](docs/ApiApi.md#uploadBase64Files) | **POST** /api/uploadBase64Files | 
+*ApiApi* | [**uploadBase64Files**](docs/ApiApi.md#uploadBase64Files) | **POST** /api/uploadBase64Files/{token} | 
 
 
 ## Documentation for Models

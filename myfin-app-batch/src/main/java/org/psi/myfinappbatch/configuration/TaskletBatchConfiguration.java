@@ -104,6 +104,7 @@ public class TaskletBatchConfiguration {
             /* le post construct ne marche pas !!!!!! */
 
             this.customApiApi.getApiClient().setBasePath(baseRefGatewayBackService);
+            this.customApiApi.getApiClient().setBearerToken(dataService.getToken());
 
             /*************************** */
 

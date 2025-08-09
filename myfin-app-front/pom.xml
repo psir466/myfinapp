@@ -123,7 +123,7 @@
                      
                      <!-- Reference to the Petstore spec -->
                      <inputSpec>
-                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-front/src/main/resources/myfinappswaggerV5.json
+                        C:/Users/psir1/worlspacemyfinapp2/myfinapp/myfin-app-front/src/main/resources/myfinappsswaggerV6withsecurity
                      </inputSpec>
 
                      <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
@@ -281,7 +281,7 @@
 					</to>
 					<container>
 						<ports>
-							<port>8100</port> 
+							<port>8100</port>
             			</ports>
 					</container>
 				</configuration>

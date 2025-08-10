@@ -37,9 +37,27 @@
             </div>
           }
         </div>
+
       </div>
 
       <button type="submit">Submit</button>
+
+
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="curb1Display" [checked]="true" (change)="toggleCurve(0, $event)">
+          Courbe 1
+        </label>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="curb2Display" [checked]="true" (change)="toggleCurve(1, $event)">
+          Courbe 2
+        </label>
+      </div>
+
+
     </form>
   </section>
 

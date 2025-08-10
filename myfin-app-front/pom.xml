@@ -105,8 +105,8 @@
 			        </execution>
 			    </executions>
 			</plugin>-->
-			
-			 <plugin>
+
+						 <plugin>
             	<groupId>org.openapitools</groupId>
     			<artifactId>openapi-generator-maven-plugin</artifactId>
     			<version>7.12.0</version>
@@ -229,7 +229,8 @@
             	</executions>
          	</plugin>
          	
-         	<plugin>
+
+			<plugin>
 		        <groupId>com.github.eirslett</groupId>
 		        <artifactId>frontend-maven-plugin</artifactId>
 		        <version>1.14.1</version>
@@ -270,10 +271,13 @@
       		</plugin>
 			
 
+        
+			
+
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.5</version> <configuration>
+				<version>3.4.6</version> <configuration>
 					<from>
 						<image>eclipse-temurin:17-jre-focal</image> </from>
 					<to>
@@ -294,11 +298,51 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
+
+	 		<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>copy-angular-resources</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/webapp/my-angular-app/dist/mon-app</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+        	</plugin>
+		
 		
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				  <configuration>
+					<resources>
+						<resource>
+							<directory>${project.build.outputDirectory}</directory>
+							<includes>
+								<include>static/**</include>
+								<include>templates/**</include>
+							</includes>
+						</resource>
+					</resources>
+   				 </configuration>
 			</plugin>
+
+
+
+
 		</plugins>
 	</build>
   

@@ -3,7 +3,7 @@ import { AccountServiceService } from '../account-service/account-service.servic
 import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
 import { formatDate } from '@angular/common';
 import { animate } from '@angular/animations';
-import { Chart, registerables} from 'chart.js';
+import { Chart, registerables, ChartDataset, ChartOptions } from 'chart.js';
 import 'chartjs-adapter-moment';
 import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -31,6 +31,7 @@ export class AccountListComponent implements OnInit{
   marketIndices: Market[] = [];
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
+  isSubmitted = false; // Nouvelle variable pour suivre l'état
 
   // problème avec startdate systemantiqument non remplie bien que saisie !!!!!!!!!!!!!!!!!!!????????????????????????????????
   startDate = new FormControl('2020-01-01');
@@ -39,6 +40,8 @@ export class AccountListComponent implements OnInit{
   endDate = new FormControl('2030-01-01');
   //private fb = inject(FormBuilder);
   myForm!: FormGroup;
+  curb1Display = new FormControl(true);
+  curb2Display = new FormControl(true);
 
 	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar){}
 
@@ -61,6 +64,8 @@ export class AccountListComponent implements OnInit{
           end: this.end,
           endDate: this.endDate,
           typeAccounts:  this.fb.array([]),
+          curb1Display: this.curb1Display,
+          curb2Display: this.curb2Display
 
          });
 
@@ -77,6 +82,23 @@ export class AccountListComponent implements OnInit{
 
          console.log(this.myForm);
 
+
+         const savedState =  localStorage.getItem('formState');
+        if (savedState) {
+          const state = JSON.parse(savedState);
+          this.isSubmitted = state.isSubmitted;
+
+          this.myForm.setValue(state.formData);
+
+          if(this.isSubmitted){
+             this.onSubmit()
+          }
+
+        }
+
+        this.myForm.valueChanges.subscribe(value => {
+          this.saveState();
+        });
 
       });
 
@@ -148,14 +170,16 @@ export class AccountListComponent implements OnInit{
               data: amounts,
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.1,
-              yAxisID: 'y'
+              yAxisID: 'y',
+             // hidden: this.curb1Display.value ?? false
             },
             {
               label: 'Indes over Time',
               data: marketIndices,
               borderColor: 'rgb(211, 95, 17)',
               tension: 0.1,
-              yAxisID: 'yMarket'
+              yAxisID: 'yMarket',
+             // hidden: this.curb2Display.value ?? false
             }
           ],
         },
@@ -243,10 +267,23 @@ export class AccountListComponent implements OnInit{
     }
 
 
+    saveState(): void {
+      const stateToSave = {
+        isSubmitted: this.isSubmitted,
+        formData: this.myForm.value,
+        };
+      localStorage.setItem('formState', JSON.stringify(stateToSave));
+    }
+
     onSubmit() {
       if (this.myForm.valid) {
 
 
+        this.isSubmitted = true;
+
+
+         // Sauvegarder l'état après la soumission
+        this.saveState();
 
         const selectTypes = this.typeAccounts.value.filter((v: { checked: any; })=> v.checked);
 
@@ -290,7 +327,8 @@ export class AccountListComponent implements OnInit{
                 }
 
                 this.createChart(this.sumDates, this.marketIndices);
-
+                this.updateDisplayCurve(0, this.curb1Display.value ?? false);
+                this.updateDisplayCurve(1, this.curb2Display.value ?? false);
 
 
               },
@@ -349,7 +387,8 @@ export class AccountListComponent implements OnInit{
               }
 
               this.createChart(this.sumDates, this.marketIndices);
-
+              this.updateDisplayCurve(0, this.curb1Display.value ?? false);
+              this.updateDisplayCurve(1, this.curb2Display.value ?? false);
 
 
             },
@@ -427,9 +466,44 @@ export class AccountListComponent implements OnInit{
       getMarketIndiceWithSum(sumDate: AccountDateSum[], indiceDate: Market[]){
 
 
-        
+
 
 
       }
+
+        /**
+   * Fonction pour afficher ou masquer une courbe.
+   * @param curveIndex L'index de la courbe (0 pour la première, 1 pour la deuxième).
+   * @param isVisible L'état de la case à cocher (true pour visible, false pour masqué).
+   */
+    toggleCurve(curveIndex: number, event: Event): void {
+
+      if(event && event.target){
+
+        if (this.chart && this.chart.data.datasets[curveIndex]) {
+
+            // (event.target as HTMLInputElement) : C'est ce qu'on appelle un "type casting".
+            // Par défaut, event.target est de type EventTarget. Pour accéder à des propriétés
+            // spécifiques comme checked, on doit dire à TypeScript que l'élément est en fait
+            // un HTMLInputElement.
+            // Cela permet au compilateur de savoir que la propriété .checked est bien disponible et de corriger l'erreur.
+
+            const isChecked = (event.target as HTMLInputElement).checked;
+            // Met à jour la propriété 'hidden' de la courbe
+            this.updateDisplayCurve(curveIndex, isChecked);
+
+        }
+      }
+    }
+
+    updateDisplayCurve(curveIndex: number, isDisplay: boolean): void {
+
+            // Met à jour la propriété 'hidden' de la courbe
+            (this.chart.data.datasets[curveIndex] as ChartDataset<'line'>).hidden = !isDisplay;
+
+            // Met à jour le graphique pour appliquer les changements
+            this.chart.update();
+
+    }
 
 }

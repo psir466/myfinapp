@@ -1,10 +1,19 @@
+
+
 <div class="container">
 
-  <section class="upload-section">
-    <h2>Upload de fichiers</h2>
-    <input type="file" multiple (change)="onFileSelected($event)" />
-    <button (click)="uploadFiles()">Upload</button>
+
+  <section class="logout-section">
+    <app-logout-button></app-logout-button>
   </section>
+
+  @if (userAdmin) {
+    <section class="upload-section">
+      <h2>Upload de fichiers</h2>
+      <input type="file" multiple (change)="onFileSelected($event)" />
+      <button (click)="uploadFiles()">Upload</button>
+    </section>
+  }
 
   <section class="form-section">
     <h2>Formulaire de données</h2>

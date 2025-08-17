@@ -24,6 +24,11 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
+
+
+    console.log('LoginComponent initialized !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+
     if (this.authService.getToken()) {
       this.router.navigate(['/accountlist']); // Rediriger si déjà connecté
     }

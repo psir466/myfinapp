@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, inject, Injectable } from '@angular/core';
 import { AccountServiceService } from '../account-service/account-service.service';
 import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
 import { formatDate } from '@angular/common';
@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
+import { LogoutButtonComponent } from "../logout-button/logout-button.component";
+import { AuthService } from '../auth-service/auth.service';
+
 
 
 Chart.register(...registerables);
@@ -16,11 +19,14 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-account-list',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LogoutButtonComponent],
   templateUrl: './account-list.component.html',
   styleUrl: './account-list.component.css'
 })
 
+@Injectable({
+  providedIn: 'root' // <-- C'est ici qu'il faut s'assurer que c'est bien configuré
+})
 
 export class AccountListComponent implements OnInit{
 
@@ -42,14 +48,18 @@ export class AccountListComponent implements OnInit{
   myForm!: FormGroup;
   curb1Display = new FormControl(true);
   curb2Display = new FormControl(true);
+  userAdmin: boolean | null = null;
 
-	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar){}
+	constructor(private accountService: AccountServiceService, private http:  HttpClient, private fb: FormBuilder, private snackBar: MatSnackBar, private authService: AuthService){}
 
 		 ngOnInit(): void {
 
 
+       this.userAdmin = this.authService.hasRole('ROLE_ADMIN');
 
-      this.accountService.getAccountType().subscribe((data) => {
+       console.log('!!!!!!!!!!!!!!!!!!!!!! on est sur un admin !!!!!!!!!!!!!!!!!!!!!!! : ' + this.userAdmin);
+
+       this.accountService.getAccountType().subscribe((data) => {
 
         this.accountTypes = data;
 
@@ -79,6 +89,7 @@ export class AccountListComponent implements OnInit{
         });
 
 
+        console.log('!!!!!!!!!!!!!!!!!!!!!! on est sur un admin !!!!!!!!!!!!!!!!!!!!!!! : ' + this.userAdmin);
 
          console.log(this.myForm);
 

@@ -1,9 +1,10 @@
 // src/app/auth/auth.service.ts
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class AuthService {
   private baseUrl = 'http://localhost:8100/backfront'; // URL de votre BoF
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient, private router: Router) { }
+
+  constructor(private http: HttpClient, private router: Router, private jwtHelper: JwtHelperService) { }
 
   private hasToken(): boolean {
     return !!localStorage.getItem('jwt_token');
@@ -49,4 +51,44 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
+
+
+   // Décoder le token et récupérer les informations
+  public getDecodedToken(): any {
+    const token = this.getToken();
+    if (token) {
+      return this.jwtHelper.decodeToken(token);
+    }
+    return null;
+  }
+
+  public getUserRoles(): string[] | null {
+    const decodedToken = this.getDecodedToken();
+    // Le nom du claim doit correspondre à celui de votre backend (ex: 'roles')
+
+    console.log('******************************* decode token ********************************');
+
+    console.log(decodedToken);
+
+    return decodedToken && decodedToken.roles ? decodedToken.roles : null;
+  }
+
+// Vérifier si l'utilisateur possède un rôle spécifique
+  public hasRole(roleToCheck: string): boolean {
+    const userRoles = this.getUserRoles();
+
+    console.log('############################roles du user ####################: ' + userRoles);
+
+    if (userRoles) {
+      return userRoles.includes(roleToCheck);
+    }
+    return false;
+  }
+
+  // Vérifier si l'utilisateur est authentifié
+  public isAuthenticated(): boolean {
+    const token = this.getToken();
+    return !this.jwtHelper.isTokenExpired(token);
+  }
+
 }

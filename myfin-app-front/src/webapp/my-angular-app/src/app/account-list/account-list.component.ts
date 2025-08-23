@@ -10,6 +10,7 @@ import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Va
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { LogoutButtonComponent } from "../logout-button/logout-button.component";
+import { WebSocketComponentComponent } from "../web-socket-component/web-socket-component.component";
 import { AuthService } from '../auth-service/auth.service';
 
 
@@ -19,7 +20,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-account-list',
-  imports: [ReactiveFormsModule, LogoutButtonComponent],
+  imports: [ReactiveFormsModule, LogoutButtonComponent, WebSocketComponentComponent],
   templateUrl: './account-list.component.html',
   styleUrl: './account-list.component.css'
 })

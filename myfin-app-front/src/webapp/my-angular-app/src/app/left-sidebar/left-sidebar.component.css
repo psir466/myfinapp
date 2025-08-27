@@ -1,0 +1,9 @@
+.left-panel {
+  /* width: 250px; /* Exemple de largeur, tu peux l'ajuster */
+  /* height: 100vh; /* Pour qu'il prenne toute la hauteur de la fenêtre */
+  background-color: #f0f0f0; /* Une couleur d'arrière-plan pour le démarquer */
+  padding: 15px;
+  box-sizing: border-box; /* Pour que le padding soit inclus dans la largeur */
+  /* Si tu as besoin d'une barre de défilement, tu peux l'ajouter ici */
+  /* overflow-y: auto; */
+}

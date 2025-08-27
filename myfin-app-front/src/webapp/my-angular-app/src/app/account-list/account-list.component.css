@@ -1,5 +1,3 @@
-/* account-list.component.css */
-
 :host {
   display: block;
   font-family: sans-serif;
@@ -7,24 +5,30 @@
 
 .container {
   display: grid;
+  /* Pour les petits écrans, on garde une seule colonne, l'ordre n'a pas d'importance ici */
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
   gap: 15px;
   padding: 15px;
-  max-width: 2560px; /* Increased max-width */
+  max-width: 2560px;
   margin: 0 auto;
 }
 
 /* Medium Screens (Tablets/Smaller Desktops) */
-@media (min-width: 768px) and (max-width: 1199px) { /* Adjusted max-width */
+@media (min-width: 768px) and (max-width: 1199px) {
   .container {
-    grid-template-columns: 0.6fr 1.4fr;
-    grid-template-rows: auto auto 1fr auto;
+    /* Nouvelle structure pour trois colonnes */
+    grid-template-columns: 0.3fr 2.5fr 0.2fr;
+    grid-template-rows: auto 1fr auto auto;
     grid-template-areas:
-      "upload upload"
-      "form chart"
-      "form chart"
-      "misc misc";
+      "upload upload upload"
+      "form chart sidebar"
+      "form chart sidebar"
+      "misc chart sidebar";
+  }
+
+  .info {
+    grid-area: sidebar;
   }
 
   .upload-section {
@@ -45,14 +49,19 @@
 }
 
 /* Large Screens (Larger Desktops) */
-@media (min-width: 1200px) { /* New breakpoint */
+@media (min-width: 1200px) {
   .container {
-    grid-template-columns: 0.4fr 1.6fr; /* Even more space for the chart */
-    grid-template-rows: auto 1fr auto; /* Simplified rows */
+    /* Nouvelle structure pour trois colonnes */
+    grid-template-columns: 0.4fr 2.4fr 0.2fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
-      "upload chart" /* Upload and chart side-by-side */
-      "form chart" /* Form and chart taking most space */
-      "misc chart"; /* Misc section too */
+      "upload upload upload"
+      "form chart sidebar"
+      "misc chart sidebar";
+  }
+
+  .info {
+    grid-area: sidebar;
   }
 
   .upload-section {
@@ -70,12 +79,10 @@
   .misc-section {
     grid-area: misc;
   }
-
-
 }
 
-
 /* Sections */
+.info,
 .upload-section,
 .form-section,
 .chart-section,
@@ -83,7 +90,10 @@
   border: 1px solid #ddd;
   padding: 5px;
   border-radius: 8px;
+  /* Essentiel pour empêcher les éléments de s'étendre */
+  min-width: 0;
 }
+
 
 h2 {
   color: #333;
@@ -183,22 +193,28 @@ button[type="submit"]:hover {
   background-color: #0056b3;
 }
 
+/* Chart */
 .chart-section {
   width: 100%;
-  display: flex; /* Use Flexbox */
-  flex-direction: column; /* Stack elements vertically */
+  height: 100%; /* S'assure que la section occupe tout l'espace vertical */
+  display: flex;
+  flex-direction: column;
 }
 
 #chart {
   width: 100%;
-  height: 100%; /* Important: Take full height of section */
-  position: relative; /* For potential positioning of elements within */
+  height: 100%;
+  position: relative;
+  min-width: 0;
+  /* Cache le contenu qui dépasse pour éviter le débordement horizontal */
+  overflow: hidden;
 }
 
 #myChart {
-  width: 100%; /* Canvas takes full width */
-  height: 100%; /* Canvas takes full height */
-  display: block; /* Ensure canvas behaves as a block element */
+  width: 100% !important; /* Force la largeur du canvas à 100% du parent */
+  height: auto !important; /* Laisse la hauteur s'adapter proportionnellement */
+  max-width: 100%; /* S'assure que le canvas ne dépasse pas son conteneur */
+  display: block;
 }
 
 
@@ -207,4 +223,8 @@ button[type="submit"]:hover {
   text-align: center;
 }
 
-
+.info {
+  /* Supprimez les largeurs et hauteurs fixes pour que la grille gère le placement */
+  height: auto;
+  width: auto;
+}

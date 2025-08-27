@@ -17,13 +17,20 @@ export class WebSocketComponentComponent {
   constructor(private websocketService: WebsocketService) {}
 
   ngOnInit(): void {
-    this.dataSubscription = this.websocketService.getUpdatedData().subscribe(
+
+
+   this.coursValue = localStorage.getItem('cours');
+   this.varValue = localStorage.getItem('variation');
+
+   this.dataSubscription = this.websocketService.getUpdatedData().subscribe(
       (updatedData) => {
         console.log("donnée reçu dans le composant WebSocket " + updatedData);
         if (updatedData) {
           this.coursValue = updatedData.cours;
           this.varValue = updatedData.variation;
-           console.log("donnée reçu pour affichage " + this.coursValue + " " + this.varValue);
+          localStorage.setItem('cours', updatedData.cours);
+          localStorage.setItem('variation', updatedData.variation);
+          console.log("donnée reçu pour affichage " + this.coursValue + " " + this.varValue);
         }
       }
     );

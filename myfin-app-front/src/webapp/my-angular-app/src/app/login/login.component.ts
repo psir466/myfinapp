@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth-service/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms'; // <-- Ajoutez cette ligne
+import { WebsocketService } from '../web-socket-service/websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -20,10 +22,21 @@ export class LoginComponent implements OnInit {
   username!: string;
   password!: string;
   errorMessage: string = '';
+  private dataSubscription: Subscription | undefined;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private websocketService: WebsocketService) { }
 
   ngOnInit(): void {
+
+    this.dataSubscription = this.websocketService.getUpdatedData().subscribe(
+      (updatedData) => {
+        console.log("donnée reçu dans le composant WebSocket " + updatedData);
+        if (updatedData) {
+          localStorage.setItem('cours', updatedData.cours);
+          localStorage.setItem('variation', updatedData.variation);
+        }
+      }
+    );
 
 
     console.log('LoginComponent initialized !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');

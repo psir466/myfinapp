@@ -9,8 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
-import { LogoutButtonComponent } from "../logout-button/logout-button.component";
-import { WebSocketComponentComponent } from "../web-socket-component/web-socket-component.component";
+import { HeaderComponent } from "../header/header.component";
+import { LeftSidebarComponent } from "../left-sidebar/left-sidebar.component";
 import { AuthService } from '../auth-service/auth.service';
 
 
@@ -20,9 +20,9 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-account-list',
-  imports: [ReactiveFormsModule, LogoutButtonComponent, WebSocketComponentComponent],
+  imports: [ReactiveFormsModule, HeaderComponent, LeftSidebarComponent],
   templateUrl: './account-list.component.html',
-  styleUrl: './account-list.component.css'
+  styleUrls: ['./account-list.component.css']
 })
 
 @Injectable({

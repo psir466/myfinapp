@@ -3,13 +3,16 @@
 <div class="container">
 
 
-  <section class="logout-section">
-    <app-logout-button></app-logout-button>
+
+  <header class="logout-section">
+    <app-header></app-header>
+  </header>
+
+
+  <section class="info">
+    <app-left-sidebar></app-left-sidebar>
   </section>
 
-  <section class="websocket-section">
-    <app-web-socket-component></app-web-socket-component>
-  </section>
 
   @if (userAdmin) {
     <section class="upload-section">

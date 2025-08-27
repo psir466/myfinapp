@@ -1,0 +1,36 @@
+.app-header {
+  /* Propriétés de base du conteneur */
+  display: flex; /* Active Flexbox */
+  justify-content: space-between; /* Espace les éléments aux extrémités */
+  align-items: center; /* Centre les éléments verticalement */
+  padding: 15px 30px; /* Espace intérieur (haut/bas et gauche/droite) */
+  background-color: #333; /* Couleur de fond sombre */
+  color: #fff; /* Couleur de texte blanche */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère pour donner du relief */
+}
+
+/* Style du logo */
+.logo {
+  font-size: 1.5rem; /* Taille de la police pour le logo */
+  font-weight: bold; /* Texte en gras */
+}
+
+/* Style de la barre de navigation */
+.main-nav ul {
+  list-style: none; /* Supprime les puces des listes */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Active Flexbox pour aligner les liens */
+  gap: 25px; /* Ajoute un espace entre les éléments */
+}
+
+.main-nav a {
+  text-decoration: none; /* Supprime le soulignement des liens */
+  color: #fff; /* Couleur des liens */
+  font-weight: 500;
+  transition: color 0.3s ease; /* Ajoute une transition pour l'effet de survol */
+}
+
+.main-nav a:hover {
+  color: #00bfff; /* Change la couleur au survol */
+}

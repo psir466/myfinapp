@@ -208,7 +208,7 @@ public class TaskletBatchConfiguration {
 
     private void getaccountName(AccountHeaderDTO account, String cellToString){
         if(cellToString.equals("Cachmir2")){
-            account.setAccountType(AccountTypeEnum.ASSURVIE);
+            account.setAccountType(AccountTypeEnum.ASSURVIEPOSTE);
         }else if(cellToString.equals("PEE + PER")){
             account.setAccountType(AccountTypeEnum.EPARGNESALARIALE);
         }else if(cellToString.equals("PEA")){
@@ -218,7 +218,7 @@ public class TaskletBatchConfiguration {
         }else if(cellToString.equals("CTO")){
             account.setAccountType(AccountTypeEnum.CTO);
         }else if(cellToString.equals("Mutavie")){
-            account.setAccountType(AccountTypeEnum.ASSURVIE);
+            account.setAccountType(AccountTypeEnum.ASSURVIEMUTA);
         }else if(cellToString.equals("Spirica")){
             account.setAccountType(AccountTypeEnum.ASSURVIE);
         }else if(cellToString.equals("LLD")){

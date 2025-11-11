@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, inject, Injectable } from '@angular/core';
 import { AccountServiceService } from '../account-service/account-service.service';
-import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
+import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market, MarketValue, AccountValue, AccountDatePercentage, AccountDataResult, CombinedData, MarketDataResult, MarketPercentage } from '../model/account-model';
 import { formatDate } from '@angular/common';
 import { animate } from '@angular/animations';
 import { Chart, registerables, ChartDataset, ChartOptions } from 'chart.js';
@@ -8,7 +8,7 @@ import 'chartjs-adapter-moment';
 import { HttpClient } from '@angular/common/http';
 import { FormArray, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { HeaderComponent } from "../header/header.component";
 import { LeftSidebarComponent } from "../left-sidebar/left-sidebar.component";
 import { AuthService } from '../auth-service/auth.service';
@@ -31,11 +31,14 @@ Chart.register(...registerables);
 
 export class AccountListComponent implements OnInit{
 
+
   selectedFiles: File[] = [];
 	accounts: Account[] = [];
   accountTypes: string[] = [];
-  sumDates: AccountDateSum[] = [];
-  marketIndices: Market[] = [];
+  sumDates: AccountDateSum[] | AccountDatePercentage[] = [];
+  accountValues: AccountValue[] = [];
+  marketValues: MarketValue[] = [];
+  marketIndices: Market[] | MarketPercentage[] = [];
   @ViewChild('myChart') myChartCanvas!: ElementRef;
   chart: any;
   isSubmitted = false; // Nouvelle variable pour suivre l'état
@@ -45,6 +48,7 @@ export class AccountListComponent implements OnInit{
   end = new FormControl('2020-01-01');
   typeAccount = new FormControl('');
   endDate = new FormControl('2030-01-01');
+  percentageDisplay = new FormControl(false);
   //private fb = inject(FormBuilder);
   myForm!: FormGroup;
   curb1Display = new FormControl(true);
@@ -74,6 +78,7 @@ export class AccountListComponent implements OnInit{
           startDate: this.startDate,
           end: this.end,
           endDate: this.endDate,
+          percentageDisplay: this.percentageDisplay,
           typeAccounts:  this.fb.array([]),
           curb1Display: this.curb1Display,
           curb2Display: this.curb2Display
@@ -151,7 +156,7 @@ export class AccountListComponent implements OnInit{
   }
 
 
-    createChart(data: AccountDateSum[], dataMarket: Market[]): void {
+    createChart(data: AccountValue[], dataMarket: MarketValue[], booleanPercentage: boolean): void {
 
 
       const dates = data.map((d) => {
@@ -164,11 +169,46 @@ export class AccountListComponent implements OnInit{
       });
 
 
-      const amounts = data.map((d) => d.sum);
-      const marketIndices = dataMarket.map((m) => m.indicePoint);
+      const amounts = data.map((d) => d.value);
 
-      let minValue = Math.min(...amounts);
-      let minValueMarket = Math.min(...marketIndices);
+      const marketIndices = dataMarket.map((m) => m.value);
+
+
+      const marketIndices2 = dates.map(d => {
+
+        const marketForDate = dataMarket.find(m => {
+          return m.year === d.getFullYear() && m.month === d.getMonth() + 1;
+        });
+
+        return marketForDate ? marketForDate.value : 0;
+      });
+
+
+      let minValue;
+      let maxValue;
+      let minValueMarket;
+      let maxValueMarket;
+      let booleanBegoinAtZero = false;
+
+      if(booleanPercentage){
+
+        let amountsPercentage = [...amounts, ...marketIndices2];
+
+        minValue = Math.min(...amountsPercentage);
+        maxValue = Math.max(...amountsPercentage);
+        minValueMarket = minValue;
+        maxValueMarket = maxValue;
+        booleanBegoinAtZero = true;
+
+      }else{
+
+         minValue = Math.min(...amounts);
+         maxValue = Math.max(...amounts);
+         minValueMarket = Math.min(...marketIndices);
+         maxValueMarket = Math.max(...marketIndices);
+         booleanBegoinAtZero = false;
+
+      }
 
 
 
@@ -187,7 +227,7 @@ export class AccountListComponent implements OnInit{
             },
             {
               label: 'Indes over Time',
-              data: marketIndices,
+              data: marketIndices2,
               borderColor: 'rgb(211, 95, 17)',
               tension: 0.1,
               yAxisID: 'yMarket',
@@ -206,13 +246,15 @@ export class AccountListComponent implements OnInit{
             },
             y: {
               position: 'left',
-              beginAtZero: false,
-              min: minValue
+              beginAtZero: booleanBegoinAtZero,
+              min: minValue,
+              max: maxValue
             },
             yMarket: {
               position: 'right',
-              beginAtZero: false,
-              min: minValueMarket
+              beginAtZero: booleanBegoinAtZero,
+              min: minValueMarket,
+              max: maxValueMarket,
             },
           },
         },
@@ -309,77 +351,33 @@ export class AccountListComponent implements OnInit{
 
         console.log("**************************" + selectType);
 
+        let dataAccountObservable: Observable<AccountDataResult>;
+        let dataMarketObservable: Observable<MarketDataResult>;
+
+        let booleanPercentage = this.myForm.value.percentageDisplay;
 
         if(selectType == '*All'){
-
-
-
-          forkJoin({
-
-              dataAccount: this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate),
-              dataMarket: this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate)
-
-          }).subscribe(
-
-            {
-              next: (results) => {
-                // 'results' sera un objet de la forme :
-                // { dataApi1: ResultatDeLAPI1, dataApi2: ResultatDeLAPI2 }
-                console.log('Résultats des deux APIs:', results);
-                // Ici, tu peux manipuler les données combinées et continuer ton traitement
-
-
-                this.sumDates = results.dataAccount;
-                this.marketIndices = results.dataMarket;
-
-
-
-                if (this.chart) {
-                  this.chart.destroy();
-                }
-
-                this.createChart(this.sumDates, this.marketIndices);
-                this.updateDisplayCurve(0, this.curb1Display.value ?? false);
-                this.updateDisplayCurve(1, this.curb2Display.value ?? false);
-
-
-              },
-              error: (error) => {
-                console.error('Erreur lors de l\'appel à l\'une des APIs:', error);
-                // Gestion des erreurs si l'un des appels échoue
-              },
-              complete: () => {
-                console.log('Les deux appels d\'API sont terminés.');
-                // Actions à effectuer une fois que tout est terminé (optionnel)
-              }
-            }
-
-          );
-
-
-          /*  this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
-
-              console.log(data);
-
-              this.sumDates = data;
-
-              if (this.chart) {
-                this.chart.destroy();
-              }
-
-              this.createChart(this.sumDates);
-
-              console.log(this.accounts);
-
-          });*/
-
+          if(booleanPercentage){
+            dataAccountObservable = this.accountService.getPercentageDate(this.myForm.value.end, this.myForm.value.endDate);
+            dataMarketObservable = this.accountService.getMarketPercentage('^GSPC', this.myForm.value.end, this.myForm.value.endDate);
+          }else{
+            dataAccountObservable = this.accountService.getSumDate(this.myForm.value.end, this.myForm.value.endDate);
+            dataMarketObservable = this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate);
+          }
         }else{
+          if(booleanPercentage){
+            dataAccountObservable = this.accountService.getSumPercentageType(selectType, this.myForm.value.end, this.myForm.value.endDate);
+            dataMarketObservable = this.accountService.getMarketPercentage('^GSPC', this.myForm.value.end, this.myForm.value.endDate);
+          }else{
+            dataAccountObservable = this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate);
+            dataMarketObservable = this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate);
+          }
+        }
 
+        forkJoin({
 
-          forkJoin({
-
-            dataAccount: this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate),
-            dataMarket: this.accountService.getMarket('^GSPC', this.myForm.value.end, this.myForm.value.endDate)
+            dataAccount: dataAccountObservable,
+            dataMarket: dataMarketObservable
 
         }).subscribe(
 
@@ -390,15 +388,73 @@ export class AccountListComponent implements OnInit{
               console.log('Résultats des deux APIs:', results);
               // Ici, tu peux manipuler les données combinées et continuer ton traitement
 
+              this.accountValues = [];
 
-              this.sumDates = results.dataAccount;
-              this.marketIndices = results.dataMarket;
+              this.marketValues = [];
+
+              if(booleanPercentage){
+                this.sumDates = results.dataAccount as AccountDatePercentage[];
+                this.sumDates.forEach(item => {
+
+                  this.accountValues.push({
+                    year: item.year,
+                    month: item.month,
+                    value: item.percentage
+                  });
+
+                });
+              }else{
+                this.sumDates = results.dataAccount as AccountDateSum[];
+                this.sumDates.forEach(item => {
+
+                  this.accountValues.push({
+                    year: item.year,
+                    month: item.month,
+                    value: item.sum
+                  });
+
+                });
+              }
+
+              if(booleanPercentage){
+
+                    this.marketIndices = results.dataMarket as MarketPercentage[];
+
+                    this.marketIndices.forEach(item => {
+
+                    this.marketValues.push({
+                      year: item.year,
+                      month: item.month,
+                      value: item.percentage
+                    });
+
+                  });
+
+
+              }else{
+
+                    this.marketIndices = results.dataMarket as Market[];
+
+                    this.marketIndices.forEach(item => {
+
+                    this.marketValues.push({
+                      year: item.year,
+                      month: item.month,
+                      value: item.indicePoint
+                    });
+
+                  });
+
+
+              }
+
+
 
               if (this.chart) {
                 this.chart.destroy();
               }
 
-              this.createChart(this.sumDates, this.marketIndices);
+              this.createChart(this.accountValues, this.marketValues, booleanPercentage);
               this.updateDisplayCurve(0, this.curb1Display.value ?? false);
               this.updateDisplayCurve(1, this.curb2Display.value ?? false);
 
@@ -416,27 +472,6 @@ export class AccountListComponent implements OnInit{
 
         );
 
-
-
-           /* this.accountService.getSumDateType(selectType, this.myForm.value.end, this.myForm.value.endDate).subscribe((data) => {
-
-              console.log(data);
-
-              this.sumDates = data;
-
-              if (this.chart) {
-                this.chart.destroy();
-              }
-
-              this.createChart(this.sumDates);
-
-              console.log(this.accounts);
-
-          });*/
-
-
-
-        }
       }
     }
 
@@ -478,9 +513,6 @@ export class AccountListComponent implements OnInit{
       getMarketIndiceWithSum(sumDate: AccountDateSum[], indiceDate: Market[]){
 
 
-
-
-
       }
 
         /**
@@ -515,6 +547,22 @@ export class AccountListComponent implements OnInit{
 
             // Met à jour le graphique pour appliquer les changements
             this.chart.update();
+
+    }
+
+    togglePercentage($event: Event) {
+
+       if(event && event.target){
+
+          if (this.chart){
+
+              const booleanPercentage = (event.target as HTMLInputElement).checked;
+
+
+          }
+
+
+       }
 
     }
 

@@ -3,6 +3,7 @@ package org.psi.myfinappbackapp.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.psi.myfinappbackapp.dto.AccountDatePercentageDTO;
 import org.psi.myfinappbackapp.dto.AccountDateSumDTO;
 import org.psi.myfinappbackapp.dto.AccountHeaderDTO;
 import org.psi.myfinappbackapp.service.AccountService;
@@ -74,6 +75,23 @@ public class AccountController {
 
 	}
 
+	@GetMapping(value = "/accountPercentageDate/{start}/{end}")
+	@Operation(summary = "Get sum of solde by month and year", description = "Retrieves percentage of solde of all accounts by month and year")
+	public ResponseEntity<List<AccountDatePercentageDTO>> getPercentageByDate(@PathVariable("start") LocalDate start, @PathVariable("end") LocalDate end) {
+
+		System.out.println("getPercentageByDate");
+
+		List<AccountDatePercentageDTO> accountPercentages = accountService.getDatePercentage(start, end);
+
+
+		if (accountPercentages != null) {
+			return ResponseEntity.ok(accountPercentages);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
+	}
+
 	@GetMapping(value = "/accountByTypeSumDate/{accountType}/{start}/{end}")
 	@Operation(summary = "Get sum of type of solde by month and year", description = "Retrieves sum of solde of all accounts by month and year")
 	public ResponseEntity<List<AccountDateSumDTO>> getTypeSumByDate(@PathVariable("accountType") String accountType, @PathVariable("start") LocalDate start, @PathVariable("end") LocalDate end) {
@@ -87,6 +105,21 @@ public class AccountController {
 		}
 
 	}
+
+		@GetMapping(value = "/accountByTypePercentageDate/{accountType}/{start}/{end}")
+	@Operation(summary = "Get percentage of type of solde by month and year", description = "Retrieves percentage of solde of all accounts by month and year")
+	public ResponseEntity<List<AccountDatePercentageDTO>> getTypePercentageByDate(@PathVariable("accountType") String accountType, @PathVariable("start") LocalDate start, @PathVariable("end") LocalDate end) {
+
+		List<AccountDatePercentageDTO> accountPercentages = accountService.getTypeDatePercentage(accountType, start, end);
+
+		if (accountPercentages != null) {
+			return ResponseEntity.ok(accountPercentages);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
+	}
+
 
 	
 	@GetMapping(value = "/accountTypes")

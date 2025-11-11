@@ -6,10 +6,13 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.psi.myfinappbackapp.dto.AccountDateSumDTO;
 import org.psi.myfinappbackapp.dto.MarketDTO;
 import org.psi.myfinappbackapp.dto.MarketDTODetail;
+import org.psi.myfinappbackapp.dto.MarketDTODetailPercentage;
+import org.psi.myfinappbackapp.dto.MarketDTOPercentage;
 import org.psi.myfinappbackapp.market.ChartResponse;
 import org.psi.myfinappbackapp.market.WebClientMarket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +45,10 @@ public class MarketService {
         for(int i=0 ; i< timestamps.size() - 1 ; i++){
 
            
+            LocalDate dateBrut = getLocalDateFromTimestamp(timestamps.get(i));
 
-            LocalDate date = getLocalDateFromTimestamp(timestamps.get(i));
+            // on ajoute un mois à la donnée car le cours correspond au dernier jour du mois
+            LocalDate date = dateBrut.plusMonths(1);
 
             if((date.isAfter(start) || date.equals(start)) && (date.isBefore(end) || date.equals(end))){
 
@@ -71,5 +76,56 @@ public class MarketService {
         return Instant.ofEpochSecond(timestamp).atZone(ZoneId.systemDefault()).toLocalDate();
 
     }
+
+
+    public MarketDTOPercentage getMarketPercentage(String typeMarket, LocalDate start, LocalDate end) {
+        
+         MarketDTO marketDTOs = getMarket(typeMarket, start, end);
+
+       List<MarketDTODetail> sortedMarkets = marketDTOs.getMarkets().stream().sorted((a, b) -> {
+            if(a.getYear() == (b.getYear())){
+                if(a.getMonth() == (b.getMonth())){
+                    return 0;
+                } else if (a.getMonth() < (b.getMonth())) {
+                        return -1;
+                } else if (a.getMonth() > (b.getMonth())){
+                        return 1;
+                }
+               
+            }
+            else
+            {
+                
+                if (a.getYear() < (b.getYear())) {
+                        return -1;
+                } else if (a.getYear() > (b.getYear())){
+                        return 1;
+                }
+
+            }
+            return 0;
+        }).collect(Collectors.toList());
+
+        List<MarketDTODetailPercentage> marketDTODetailsPercentages = new ArrayList<>();
+
+        MarketDTOPercentage marketDTOPercentage = new MarketDTOPercentage();
+
+        marketDTOPercentage.setMarkets(marketDTODetailsPercentages);
+
+        MarketDTODetail firstMarket = sortedMarkets.get(0);
+        double firstIndice = firstMarket.getIndicePoint();
+
+        for(MarketDTODetail marketDTODetail : sortedMarkets){
+            MarketDTODetailPercentage marketDTODetailPercentage = new MarketDTODetailPercentage(marketDTODetail.getYear(), marketDTODetail.getMonth(), ((marketDTODetail.getIndicePoint() - firstIndice) / firstIndice) * 100);
+
+            marketDTOPercentage.getMarkets().add(marketDTODetailPercentage);
+        }
+
+
+
+        return marketDTOPercentage;
+    }
+
+    
 
 }

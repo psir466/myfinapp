@@ -4,7 +4,7 @@ OpenAPI definition
 
 - API version: v0
 
-- Build date: 2025-08-09T21:38:52.438089+02:00[Europe/Paris]
+- Build date: 2025-11-08T14:48:41.127633800+01:00[Europe/Paris]
 
 - Generator version: 7.12.0
 
@@ -83,25 +83,27 @@ Please follow the [installation](#installation) instruction and execute the foll
 
 ```java
 
-import org.psi.myfinappfrontapp.api2.*;
-import org.psi.myfinappfrontapp.api2.auth.*;
-import org.psi.myfinappfrontapp.api2.model.*;
-import org.psi.myfinappfrontapp.api2.api.ApiApi;
+import org.psi.myfinappfrontapp.api.*;
+import org.psi.myfinappfrontapp.api.auth.*;
+import org.psi.myfinappfrontapp.api.model.*;
+import org.psi.myfinappfrontapp.api.api.ApiApi;
 
 public class ApiApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8200");
+        defaultClient.setBasePath("http://localhost:8080");
         
+        // Configure HTTP bearer authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
         ApiApi apiInstance = new ApiApi(defaultClient);
-        String token = "token_example"; // String | 
-        List<FileBase64> fileBase64 = Arrays.asList(); // List<FileBase64> | 
         try {
-            String result = apiInstance.uploadBase64Files(token, fileBase64);
+            List<String> result = apiInstance.getAccounTypes();
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ApiApi#uploadBase64Files");
+            System.err.println("Exception when calling ApiApi#getAccounTypes");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -114,22 +116,47 @@ public class ApiApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost:8200*
+All URIs are relative to *http://localhost:8080*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ApiApi* | [**uploadBase64Files**](docs/ApiApi.md#uploadBase64Files) | **POST** /api/uploadBase64Files/{token} | 
+*ApiApi* | [**getAccounTypes**](docs/ApiApi.md#getAccounTypes) | **GET** /api/accountTypes | Get all the accoun types
+*ApiApi* | [**getAccountById**](docs/ApiApi.md#getAccountById) | **GET** /api/account/{id} | Get account by id
+*ApiApi* | [**getAllAccount**](docs/ApiApi.md#getAllAccount) | **GET** /api/accounts | Get all the account
+*ApiApi* | [**getMarketByCode**](docs/ApiApi.md#getMarketByCode) | **GET** /api/markets/{code}/{start}/{end} | Get market by code
+*ApiApi* | [**getMarketPercentageByCode**](docs/ApiApi.md#getMarketPercentageByCode) | **GET** /api/marketsPercentage/{code}/{start}/{end} | Get market percentage by code
+*ApiApi* | [**getPercentageByDate**](docs/ApiApi.md#getPercentageByDate) | **GET** /api/accountPercentageDate/{start}/{end} | Get percentage of solde by month and year
+*ApiApi* | [**getSumByDate**](docs/ApiApi.md#getSumByDate) | **GET** /api/accountSumDate/{start}/{end} | Get sum of solde by month and year
+*ApiApi* | [**getTypePercentageByDate**](docs/ApiApi.md#getTypePercentageByDate) | **GET** /api/accountByTypePercentageDate/{accountType}/{start}/{end} | Get percentage of type of solde by month and year
+*ApiApi* | [**getTypeSumByDate**](docs/ApiApi.md#getTypeSumByDate) | **GET** /api/accountByTypeSumDate/{accountType}/{start}/{end} | Get sum of type of solde by month and year
+*ApiApi* | [**postAccountsToDataBase**](docs/ApiApi.md#postAccountsToDataBase) | **POST** /api/saveaccounts | Post accounts to the database
+*SecurityControllerApi* | [**authenticateUser**](docs/SecurityControllerApi.md#authenticateUser) | **POST** /api/auth/login | Post login
 
 
 ## Documentation for Models
 
- - [FileBase64](docs/FileBase64.md)
+ - [AccountDatePercentageDTO](docs/AccountDatePercentageDTO.md)
+ - [AccountDateSumDTO](docs/AccountDateSumDTO.md)
+ - [AccountHeaderDTO](docs/AccountHeaderDTO.md)
+ - [AccountLineDTO](docs/AccountLineDTO.md)
+ - [AmountOfMoney](docs/AmountOfMoney.md)
+ - [LoginRequest](docs/LoginRequest.md)
+ - [MarketDTO](docs/MarketDTO.md)
+ - [MarketDTODetail](docs/MarketDTODetail.md)
+ - [MarketDTODetailPercentage](docs/MarketDTODetailPercentage.md)
+ - [MarketDTOPercentage](docs/MarketDTOPercentage.md)
 
 
 <a id="documentation-for-authorization"></a>
 ## Documentation for Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+<a id="bearerAuth"></a>
+### bearerAuth
+
+
+- **Type**: HTTP Bearer Token authentication (JWT)
 
 
 ## Recommendation

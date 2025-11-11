@@ -148,6 +148,61 @@
         }
       }
     },
+    "/api/marketsPercentage/{code}/{start}/{end}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "summary": "Get market percentage by code",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieves market percentage by its code",
+        "operationId": "getMarketPercentageByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketDTOPercentage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/accounts": {
       "get": {
         "tags": [
@@ -258,6 +313,56 @@
         }
       }
     },
+    "/api/accountPercentageDate/{start}/{end}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "summary": "Get percentage of solde by month and year",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieves percentage of all accounts by month and year",
+        "operationId": "getPercentageByDate",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountDatePercentageDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/accountByTypeSumDate/{accountType}/{start}/{end}": {
       "get": {
         "tags": [
@@ -308,6 +413,64 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/AccountDateSumDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accountByTypePercentageDate/{accountType}/{start}/{end}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "summary": "Get percentage of type of solde by month and year",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieves percentage of all accounts by month and year",
+        "operationId": "getTypePercentageByDate",
+        "parameters": [
+          {
+            "name": "accountType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountDatePercentageDTO"
                   }
                 }
               }
@@ -458,6 +621,34 @@
           }
         }
       },
+      "MarketDTOPercentage": {
+        "type": "object",
+        "properties": {
+          "markets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketDTODetailPercentage"
+            }
+          }
+        }
+      },
+      "MarketDTODetailPercentage": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
       "AccountDateSumDTO": {
         "type": "object",
         "properties": {
@@ -478,6 +669,22 @@
               "EUR",
               "USD"
             ]
+          }
+        }
+      },
+      "AccountDatePercentageDTO": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number"
           }
         }
       }

@@ -9,11 +9,14 @@ import org.psi.myfinappfrontapp.custom.CustomApiApi2;
 import org.psi.myfinappfrontapp.custom.CustomSecurityControllerApi;
 import org.slf4j.LoggerFactory;
 import org.psi.myfinappfrontapp.api.api.SecurityControllerApi;
+import org.psi.myfinappfrontapp.api.model.AccountDatePercentageDTO;
 import org.psi.myfinappfrontapp.api.model.AccountDateSumDTO;
 import org.psi.myfinappfrontapp.api.model.AccountHeaderDTO;
 import org.psi.myfinappfrontapp.api.model.LoginRequest;
 import org.psi.myfinappfrontapp.api.model.MarketDTO;
 import org.psi.myfinappfrontapp.api.model.MarketDTODetail;
+import org.psi.myfinappfrontapp.api.model.MarketDTODetailPercentage;
+import org.psi.myfinappfrontapp.api.model.MarketDTOPercentage;
 import org.psi.myfinappfrontapp.api2.model.FileBase64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -67,6 +70,23 @@ public class FrontFinanceController {
 		
 	}
 
+	@RequestMapping(value = "/marketsPercentage/{code}/{start}/{end}", method = RequestMethod.GET)
+	public List<MarketDTODetailPercentage> getMarketPercentageByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader ){
+
+		LocalDate localDateStart = LocalDate.parse(start);
+		
+		LocalDate localDateEnd = LocalDate.parse(end);
+
+		logger.info("base ref : " + customapiapi2.getApiClient().getBasePath());
+
+		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
+
+		MarketDTOPercentage marketDTO = customapiapi.getMarketPercentageByCode(code, localDateStart, localDateEnd).block();
+
+		return marketDTO.getMarkets();
+		
+	}
+
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
 	public Flux<AccountHeaderDTO> getAllAccount(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader, @RequestHeader("Authorization") String authorizationHeader2){
@@ -98,6 +118,22 @@ public class FrontFinanceController {
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
 		return customapiapi.getSumByDate(localDateStart, localDateEnd);
+		
+		
+	}
+
+	@RequestMapping(value = "/percentagedate/{start}/{end}", method = RequestMethod.GET)
+	public Flux<AccountDatePercentageDTO> getPercentatgeByDate(@PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader){
+
+		LocalDate localDateStart = LocalDate.parse(start);
+		
+		LocalDate localDateEnd = LocalDate.parse(end);
+
+		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
+
+		logger.info("TOKEN " + authorizationHeader);
+
+		return customapiapi.getPercentageByDate(localDateStart, localDateEnd);
 		
 		
 	}
@@ -146,6 +182,21 @@ public class FrontFinanceController {
 		
 		
 	}
+
+	@RequestMapping(value = "/percentagedatetype/{type}/{start}/{end}", method = RequestMethod.GET)
+	public Flux<AccountDatePercentageDTO> getPercentageByDateType(@PathVariable String type, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader){
+
+		LocalDate localDateStart = LocalDate.parse(start);
+		
+		LocalDate localDateEnd = LocalDate.parse(end);
+
+		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
+
+		return customapiapi.getTypePercentageByDate(type, localDateStart, localDateEnd);
+		
+		
+	}
+
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)

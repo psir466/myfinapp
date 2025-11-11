@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market } from '../model/account-model';
+import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market, AccountDatePercentage, MarketPercentage } from '../model/account-model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,11 @@ export class AccountServiceService {
 
   getSumDate(start :string, end: string): Observable<AccountDateSum[]> {
     return this.http.get<AccountDateSum[]>(`http://localhost:8100/backfront/sumdate/${start}/${end}`);
+
+  }
+
+    getPercentageDate(start :string, end: string): Observable<AccountDatePercentage[]> {
+    return this.http.get<AccountDatePercentage[]>(`http://localhost:8100/backfront/percentagedate/${start}/${end}`);
 
   }
 
@@ -42,8 +47,19 @@ export class AccountServiceService {
 
   }
 
+    getSumPercentageType(typeAccount :string | null | undefined , start :string | null | undefined, end :string | null | undefined): Observable<AccountDatePercentage[]> {
+    return this.http.get<AccountDatePercentage[]>(`http://localhost:8100/backfront/percentagedatetype/${typeAccount}/${start}/${end}`);
+
+  }
+
   getMarket(code :string | null | undefined , start :string | null | undefined, end :string | null | undefined): Observable<Market[]> {
     return this.http.get<Market[]>(`http://localhost:8100/backfront/markets/${code}/${start}/${end}`);
+
+  }
+
+
+    getMarketPercentage(code :string | null | undefined , start :string | null | undefined, end :string | null | undefined): Observable<MarketPercentage[]> {
+    return this.http.get<MarketPercentage[]>(`http://localhost:8100/backfront/marketsPercentage/${code}/${start}/${end}`);
 
   }
 

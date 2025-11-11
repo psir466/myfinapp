@@ -4,28 +4,23 @@ info:
   version: v0
 servers:
 - description: Generated server url
-  url: http://localhost:8200
+  url: http://localhost:8080
 tags:
-- description: Operations related to reload data base account
+- description: Operations related to accounts
+  name: Api
+- description: Operations related to markets
   name: Api
 paths:
-  /api/uploadBase64Files/{token}:
+  /api/saveaccounts:
     post:
-      operationId: uploadBase64Files
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
+      description: Post accounts to the database
+      operationId: postAccountsToDataBase
       requestBody:
         content:
           application/json:
             schema:
               items:
-                $ref: '#/components/schemas/FileBase64'
+                $ref: '#/components/schemas/AccountHeaderDTO'
               type: array
         required: true
       responses:
@@ -35,17 +30,519 @@ paths:
               schema:
                 type: string
           description: OK
+      security:
+      - bearerAuth: []
+      summary: Post accounts to the database
       tags:
       - Api
       x-content-type: application/json
       x-accepts:
       - '*/*'
+  /api/auth/login:
+    post:
+      description: Post login
+      operationId: authenticateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      summary: Post login
+      tags:
+      - security-controller
+      x-content-type: application/json
+      x-accepts:
+      - '*/*'
+  /api/markets/{code}/{start}/{end}:
+    get:
+      description: Retrieves market by its code
+      operationId: getMarketByCode
+      parameters:
+      - explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MarketDTO'
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get market by code
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/marketsPercentage/{code}/{start}/{end}:
+    get:
+      description: Retrieves market percentage by its code
+      operationId: getMarketPercentageByCode
+      parameters:
+      - explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MarketDTOPercentage'
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get market percentage by code
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accounts:
+    get:
+      description: Retrieves all the account
+      operationId: getAllAccount
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountHeaderDTO'
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get all the account
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accountTypes:
+    get:
+      description: Retrieves all the account types
+      operationId: getAccounTypes
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  type: string
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get all the accoun types
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accountSumDate/{start}/{end}:
+    get:
+      description: Retrieves sum of solde of all accounts by month and year
+      operationId: getSumByDate
+      parameters:
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDateSumDTO'
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get sum of solde by month and year
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accountPercentageDate/{start}/{end}:
+    get:
+      description: Retrieves percentage of all accounts by month and year
+      operationId: getPercentageByDate
+      parameters:
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDatePercentageDTO'
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get percentage of solde by month and year
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accountByTypeSumDate/{accountType}/{start}/{end}:
+    get:
+      description: Retrieves sum of solde of all accounts by month and year
+      operationId: getTypeSumByDate
+      parameters:
+      - explode: false
+        in: path
+        name: accountType
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDateSumDTO'
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get sum of type of solde by month and year
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/accountByTypePercentageDate/{accountType}/{start}/{end}:
+    get:
+      description: Retrieves percentage of all accounts by month and year
+      operationId: getTypePercentageByDate
+      parameters:
+      - explode: false
+        in: path
+        name: accountType
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: start
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: end
+        required: true
+        schema:
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDatePercentageDTO'
+                type: array
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get percentage of type of solde by month and year
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
+  /api/account/{id}:
+    get:
+      description: Retrieves an account by its id
+      operationId: getAccountById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountHeaderDTO'
+          description: OK
+      security:
+      - bearerAuth: []
+      summary: Get account by id
+      tags:
+      - Api
+      x-accepts:
+      - '*/*'
 components:
   schemas:
-    FileBase64:
+    AccountHeaderDTO:
       example:
-        base64: base64
+        accountType: CTO
+        name: name
+        id: 0
+        accountLines:
+        - date: 2000-01-23
+          solde:
+            amount: 6.027456183070403
+            currency: EUR
+        - date: 2000-01-23
+          solde:
+            amount: 6.027456183070403
+            currency: EUR
       properties:
-        base64:
+        id:
+          format: int64
+          type: integer
+        name:
           type: string
+        accountType:
+          enum:
+          - CTO
+          - PEA
+          - PEAPME
+          - ASSURVIE
+          - ASSURVIEPOSTE
+          - ASSURVIEMUTA
+          - EPARGNESALARIALE
+          - LIVRETA
+          - LLD
+          - CEP
+          - CPTCOURANT
+          - PRETIMMO
+          type: string
+        accountLines:
+          items:
+            $ref: '#/components/schemas/AccountLineDTO'
+          type: array
+    AccountLineDTO:
+      example:
+        date: 2000-01-23
+        solde:
+          amount: 6.027456183070403
+          currency: EUR
+      properties:
+        date:
+          format: date
+          type: string
+        solde:
+          $ref: '#/components/schemas/AmountOfMoney'
+    AmountOfMoney:
+      example:
+        amount: 6.027456183070403
+        currency: EUR
+      properties:
+        amount:
+          type: number
+        currency:
+          enum:
+          - EUR
+          - USD
+          type: string
+    LoginRequest:
+      example:
+        password: password
+        usernameOrEmail: usernameOrEmail
+      properties:
+        usernameOrEmail:
+          type: string
+        password:
+          type: string
+    MarketDTO:
+      example:
+        markets:
+        - month: 6
+          indicePoint: 1.4658129805029452
+          year: 0
+        - month: 6
+          indicePoint: 1.4658129805029452
+          year: 0
+      properties:
+        markets:
+          items:
+            $ref: '#/components/schemas/MarketDTODetail'
+          type: array
+    MarketDTODetail:
+      example:
+        month: 6
+        indicePoint: 1.4658129805029452
+        year: 0
+      properties:
+        year:
+          format: int32
+          type: integer
+        month:
+          format: int32
+          type: integer
+        indicePoint:
+          format: double
+          type: number
+    MarketDTOPercentage:
+      example:
+        markets:
+        - month: 6
+          year: 0
+          percentage: 1.4658129805029452
+        - month: 6
+          year: 0
+          percentage: 1.4658129805029452
+      properties:
+        markets:
+          items:
+            $ref: '#/components/schemas/MarketDTODetailPercentage'
+          type: array
+    MarketDTODetailPercentage:
+      example:
+        month: 6
+        year: 0
+        percentage: 1.4658129805029452
+      properties:
+        year:
+          format: int32
+          type: integer
+        month:
+          format: int32
+          type: integer
+        percentage:
+          format: double
+          type: number
+    AccountDateSumDTO:
+      example:
+        month: 6
+        cuurency: EUR
+        year: 0
+        sum: 1.4658129805029452
+      properties:
+        year:
+          format: int32
+          type: integer
+        month:
+          format: int32
+          type: integer
+        sum:
+          type: number
+        cuurency:
+          enum:
+          - EUR
+          - USD
+          type: string
+    AccountDatePercentageDTO:
+      example:
+        month: 6
+        year: 0
+        percentage: 1.4658129805029452
+      properties:
+        year:
+          format: int32
+          type: integer
+        month:
+          format: int32
+          type: integer
+        percentage:
+          type: number
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
 

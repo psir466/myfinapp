@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.psi.myfinappbackapp.dto.AccountHeaderDTO;
 import org.psi.myfinappbackapp.dto.MarketDTO;
+import org.psi.myfinappbackapp.dto.MarketDTOPercentage;
 import org.psi.myfinappbackapp.service.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,22 @@ public class MarketController {
 
 
         MarketDTO markets = marketService.getMarket(code, start, end);
+
+        if (markets != null) {
+			return ResponseEntity.ok(markets);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+		
+	}
+
+
+	@RequestMapping(value = "/marketsPercentage/{code}/{start}/{end}", method = RequestMethod.GET)
+	@Operation(summary = "Get market by code", description = "Retrieves market percentage by its code")
+	public ResponseEntity<MarketDTOPercentage> getMarketPercentageByCode(@PathVariable("code") String code, @PathVariable("start") LocalDate start, @PathVariable("end") LocalDate end) {
+
+
+        MarketDTOPercentage markets = marketService.getMarketPercentage(code, start, end);
 
         if (markets != null) {
 			return ResponseEntity.ok(markets);

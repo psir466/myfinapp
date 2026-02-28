@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -54,46 +56,53 @@ public class FrontFinanceController {
 	
 
 	@RequestMapping(value = "/markets/{code}/{start}/{end}", method = RequestMethod.GET)
-	public List<MarketDTODetail> getMarketByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader ){
-			
+	public ResponseEntity<List<MarketDTODetail>> getMarketByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader ){
 		LocalDate localDateStart = LocalDate.parse(start);
-		
 		LocalDate localDateEnd = LocalDate.parse(end);
 
 		logger.info("base ref : " + customapiapi2.getApiClient().getBasePath());
 
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
-		MarketDTO marketDTO = customapiapi.getMarketByCode(code, localDateStart, localDateEnd).block();
-
-		return marketDTO.getMarkets();
-		
+		try {
+			MarketDTO marketDTO = customapiapi.getMarketByCode(code, localDateStart, localDateEnd).block();
+			return ResponseEntity.ok(marketDTO.getMarkets());
+		} catch (WebClientResponseException wcre) {
+			return ResponseEntity.status(wcre.getStatusCode()).build();
+		} catch (Exception e) {
+			logger.error("Error calling market service", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(value = "/marketsPercentage/{code}/{start}/{end}", method = RequestMethod.GET)
-	public List<MarketDTODetailPercentage> getMarketPercentageByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader ){
+	public ResponseEntity<List<MarketDTODetailPercentage>> getMarketPercentageByCode(@PathVariable String code, @PathVariable String start, @PathVariable String end, @RequestHeader("Authorization") String authorizationHeader ){
 
 		LocalDate localDateStart = LocalDate.parse(start);
-		
 		LocalDate localDateEnd = LocalDate.parse(end);
 
 		logger.info("base ref : " + customapiapi2.getApiClient().getBasePath());
 
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
-		MarketDTOPercentage marketDTO = customapiapi.getMarketPercentageByCode(code, localDateStart, localDateEnd).block();
-
-		return marketDTO.getMarkets();
-		
+		try {
+			MarketDTOPercentage marketDTO = customapiapi.getMarketPercentageByCode(code, localDateStart, localDateEnd).block();
+			return ResponseEntity.ok(marketDTO.getMarkets());
+		} catch (WebClientResponseException wcre) {
+			return ResponseEntity.status(wcre.getStatusCode()).build();
+		} catch (Exception e) {
+			logger.error("Error calling market percentage service", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
 	public Flux<AccountHeaderDTO> getAllAccount(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader, @RequestHeader("Authorization") String authorizationHeader2){
-
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
-				
-		return customapiapi.getAllAccount();
+
+		return customapiapi.getAllAccount()
+				.onErrorMap(this::mapToResponseStatus);
 		
 	}
 	
@@ -102,8 +111,9 @@ public class FrontFinanceController {
 	public Mono<AccountHeaderDTO> getAccountById(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader){
 		
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
-	
-		return customapiapi.getAccountById(id);
+    
+		return customapiapi.getAccountById(id)
+				.onErrorMap(this::mapToResponseStatus);
 		
 		
 	}
@@ -117,7 +127,8 @@ public class FrontFinanceController {
 
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
-		return customapiapi.getSumByDate(localDateStart, localDateEnd);
+		return customapiapi.getSumByDate(localDateStart, localDateEnd)
+			.onErrorMap(this::mapToResponseStatus);
 		
 		
 	}
@@ -133,7 +144,8 @@ public class FrontFinanceController {
 
 		logger.info("TOKEN " + authorizationHeader);
 
-		return customapiapi.getPercentageByDate(localDateStart, localDateEnd);
+		return customapiapi.getPercentageByDate(localDateStart, localDateEnd)
+			.onErrorMap(this::mapToResponseStatus);
 		
 		
 	}
@@ -162,8 +174,9 @@ public class FrontFinanceController {
 		logger.info("recup token dans account type :" + authorizationHeader);
 
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
-	
-		return customapiapi.getAccounTypes();
+    
+		return customapiapi.getAccounTypes()
+			.onErrorMap(this::mapToResponseStatus);
 		
 	
 	}
@@ -178,7 +191,8 @@ public class FrontFinanceController {
 		
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
-		return customapiapi.getTypeSumByDate(type, localDateStart, localDateEnd);
+		return customapiapi.getTypeSumByDate(type, localDateStart, localDateEnd)
+			.onErrorMap(this::mapToResponseStatus);
 		
 		
 	}
@@ -192,7 +206,8 @@ public class FrontFinanceController {
 
 		customapiapi.getApiClient().setBearerToken(authorizationHeader.substring(7));
 
-		return customapiapi.getTypePercentageByDate(type, localDateStart, localDateEnd);
+		return customapiapi.getTypePercentageByDate(type, localDateStart, localDateEnd)
+			.onErrorMap(this::mapToResponseStatus);
 		
 		
 	}
@@ -210,6 +225,14 @@ public class FrontFinanceController {
 
         return customSecurityControllerApi.authenticateUser(loginRequest);
     }
+
+	private Throwable mapToResponseStatus(Throwable e) {
+		if (e instanceof WebClientResponseException) {
+			WebClientResponseException w = (WebClientResponseException) e;
+			return new ResponseStatusException(w.getStatusCode(), w.getResponseBodyAsString(), e);
+		}
+		return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+	}
 
 
 }

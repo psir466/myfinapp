@@ -267,7 +267,6 @@ export class AccountListComponent implements OnInit{
 
 
     uploadFiles() {
-
       const f64: FileBase64[] = [];
 
       const promises = this.selectedFiles.map((file) => {
@@ -293,31 +292,22 @@ export class AccountListComponent implements OnInit{
                 panelClass: ['success-snackbar'],
               });
             },
+            // L'erreur est désormais gérée par l'intercepteur d'erreurs global
             error: (error) => {
-              console.error('Error from accountService:', error);
-              let errorMessage = 'Error loading data. Please try again.';
-              if (error && error.message) {
-                errorMessage = `Error: ${error.message}`; // More specific error
-              }
-              this.snackBar.open(errorMessage, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['error-snackbar'],
-              });
+              console.log('Erreur capturée au niveau du composant:', error);
+              // L'utilisateur a déjà reçu un snackbar du côté de l'intercepteur
             },
           });
         })
         .catch((promiseError) => {
           console.error('Error in Promise.all:', promiseError);
-          this.snackBar.open('An unexpected error occurred.', 'Close', {
+          this.snackBar.open('Error reading files. Please try again.', 'Close', {
             duration: 5000,
             horizontalPosition: 'center',
             verticalPosition: 'bottom',
             panelClass: ['error-snackbar'],
           });
         });
-
     }
 
 
@@ -375,102 +365,68 @@ export class AccountListComponent implements OnInit{
         }
 
         forkJoin({
+          dataAccount: dataAccountObservable,
+          dataMarket: dataMarketObservable
+        }).subscribe({
+          next: (results) => {
+            console.log('Résultats des deux APIs:', results);
 
-            dataAccount: dataAccountObservable,
-            dataMarket: dataMarketObservable
+            this.accountValues = [];
+            this.marketValues = [];
 
-        }).subscribe(
-
-          {
-            next: (results) => {
-              // 'results' sera un objet de la forme :
-              // { dataApi1: ResultatDeLAPI1, dataApi2: ResultatDeLAPI2 }
-              console.log('Résultats des deux APIs:', results);
-              // Ici, tu peux manipuler les données combinées et continuer ton traitement
-
-              this.accountValues = [];
-
-              this.marketValues = [];
-
-              if(booleanPercentage){
-                this.sumDates = results.dataAccount as AccountDatePercentage[];
-                this.sumDates.forEach(item => {
-
-                  this.accountValues.push({
-                    year: item.year,
-                    month: item.month,
-                    value: item.percentage
-                  });
-
+            if (booleanPercentage) {
+              this.sumDates = results.dataAccount as AccountDatePercentage[];
+              this.sumDates.forEach(item => {
+                this.accountValues.push({
+                  year: item.year,
+                  month: item.month,
+                  value: item.percentage
                 });
-              }else{
-                this.sumDates = results.dataAccount as AccountDateSum[];
-                this.sumDates.forEach(item => {
-
-                  this.accountValues.push({
-                    year: item.year,
-                    month: item.month,
-                    value: item.sum
-                  });
-
+              });
+            } else {
+              this.sumDates = results.dataAccount as AccountDateSum[];
+              this.sumDates.forEach(item => {
+                this.accountValues.push({
+                  year: item.year,
+                  month: item.month,
+                  value: item.sum
                 });
-              }
-
-              if(booleanPercentage){
-
-                    this.marketIndices = results.dataMarket as MarketPercentage[];
-
-                    this.marketIndices.forEach(item => {
-
-                    this.marketValues.push({
-                      year: item.year,
-                      month: item.month,
-                      value: item.percentage
-                    });
-
-                  });
-
-
-              }else{
-
-                    this.marketIndices = results.dataMarket as Market[];
-
-                    this.marketIndices.forEach(item => {
-
-                    this.marketValues.push({
-                      year: item.year,
-                      month: item.month,
-                      value: item.indicePoint
-                    });
-
-                  });
-
-
-              }
-
-
-
-              if (this.chart) {
-                this.chart.destroy();
-              }
-
-              this.createChart(this.accountValues, this.marketValues, booleanPercentage);
-              this.updateDisplayCurve(0, this.curb1Display.value ?? false);
-              this.updateDisplayCurve(1, this.curb2Display.value ?? false);
-
-
-            },
-            error: (error) => {
-              console.error('Erreur lors de l\'appel à l\'une des APIs:', error);
-              // Gestion des erreurs si l'un des appels échoue
-            },
-            complete: () => {
-              console.log('Les deux appels d\'API sont terminés.');
-              // Actions à effectuer une fois que tout est terminé (optionnel)
+              });
             }
-          }
 
-        );
+            if (booleanPercentage) {
+              this.marketIndices = results.dataMarket as MarketPercentage[];
+              this.marketIndices.forEach(item => {
+                this.marketValues.push({
+                  year: item.year,
+                  month: item.month,
+                  value: item.percentage
+                });
+              });
+            } else {
+              this.marketIndices = results.dataMarket as Market[];
+              this.marketIndices.forEach(item => {
+                this.marketValues.push({
+                  year: item.year,
+                  month: item.month,
+                  value: item.indicePoint
+                });
+              });
+            }
+
+            if (this.chart) {
+              this.chart.destroy();
+            }
+
+            this.createChart(this.accountValues, this.marketValues, booleanPercentage);
+            this.updateDisplayCurve(0, this.curb1Display.value ?? false);
+            this.updateDisplayCurve(1, this.curb2Display.value ?? false);
+          },
+          error: (error) => {
+            // L'erreur est gérée par l'intercepteur d'erreurs global
+            console.log('Erreur lors de l\'appel à l\'une des APIs:', error);
+          }
+        });
 
       }
     }

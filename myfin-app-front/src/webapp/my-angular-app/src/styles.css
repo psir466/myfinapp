@@ -15,4 +15,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   --mdc-snackbar-supporting-text-color: white;
 }
 
+.warning-snackbar {
+  --mdc-snackbar-container-color: #ff9800; /* Orange for warning */
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+.info-snackbar {
+  --mdc-snackbar-container-color: #2196F3; /* Blue for info */
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+
 

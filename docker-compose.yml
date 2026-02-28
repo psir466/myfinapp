@@ -1,0 +1,84 @@
+version: '3.8'
+services:
+
+  server-db:
+    image: postgres
+    container_name: myfinappdbpostgres2
+    volumes:
+      - myfinappvolume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: myfinappdb
+      POSTGRES_USER: admin
+    ports:
+      - "8300:5432"
+    networks:
+      - spring-cloud-network
+
+
+  eureka-server:
+    image: my-eureka-service:latest # Remplacez par votre image Eureka
+    ports:
+      - "8761:8761"
+    depends_on:
+      - server-db
+    networks:
+      - spring-cloud-network
+
+  gateway-service:
+    image: my-gateway-service:latest # Le nom de votre image de gateway
+    ports:
+      - "8889:8888"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    depends_on:
+      - eureka-server
+    networks:
+      - spring-cloud-network
+      
+  my-appfin-back-service:
+    image: my-appfin-back-service:latest
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+      DB_URL: "jdbc:postgresql://server-db:5432/myfinappdb"
+    depends_on:
+      - gateway-service
+    networks:
+      - spring-cloud-network
+      
+  my-appfin-batch-service:
+    image: my-appfin-batch-service:latest
+    ports:
+      - "8200:8200"
+    environment:
+      BASEREFGATE_BACKSERVICE: "http://gateway-service:8888/MYFINAPPBACKSERVICE"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    depends_on:
+      - my-appfin-back-service
+    networks:
+      - spring-cloud-network
+      
+  my-appfin-front-service:
+    image: my-appfin-front-service:latest
+    ports:
+      - "8100:8100"
+    environment:
+      APP_TEST: "MON TESSSSSSSSSSSSSSSSSSSSSSSSSST"  
+      SERVER_PORT: 8100 
+      BASEREFGATE_BACKSERVICE: "http://gateway-service:8888/MYFINAPPBACKSERVICE"
+      BASEREFGATE_BATCHSERVICE: "http://gateway-service:8888/MYFINAPPBATCHSERVICE" 
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    depends_on:
+      - my-appfin-batch-service
+    networks:
+      - spring-cloud-network
+      
+
+volumes:
+  myfinappvolume:
+
+networks:
+  spring-cloud-network:
+    driver: bridge

@@ -10,7 +10,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8100/backfront'; // URL de votre BoF
+  private baseUrl = 'http://finapp.local/backfront'; // URL de votre BoF
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
 

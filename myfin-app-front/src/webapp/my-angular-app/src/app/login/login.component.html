@@ -1,5 +1,5 @@
 <div class="login-container">
-  <h2>Connexion</h2>
+  <h2>Connnnnnexion V1.0</h2>
   <form (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="username">Nom d'utilisateur:</label>
@@ -10,8 +10,10 @@
       <input type="password" id="password" [(ngModel)]="password" name="password" required>
     </div>
     <button type="submit">Se connecter</button>
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
   </form>
 </div>

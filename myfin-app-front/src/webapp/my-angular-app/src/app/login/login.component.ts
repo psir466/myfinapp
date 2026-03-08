@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
     );
 
 
-    console.log('LoginComponent initialized !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log('LoginComponent initialized 2222222 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
 
     if (this.authService.getToken()) {

@@ -221,9 +221,9 @@ public class FrontFinanceController {
 
 		logger.info("*****************" + f + "*************** TEST ***************");
 
-		customSecurityControllerApi.authenticateUser(loginRequest);
 
-        return customSecurityControllerApi.authenticateUser(loginRequest);
+        return customSecurityControllerApi.authenticateUser(loginRequest)
+            .onErrorMap(this::mapToResponseStatus);
     }
 
 	private Throwable mapToResponseStatus(Throwable e) {

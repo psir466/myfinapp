@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class WebsocketService {
 
-
+  private baseUrl = 'http://finapp.local/backfront'; // URL de votre BoF
   private stompClient: Client;
   private isConnected = new BehaviorSubject<boolean>(false);
   private dataSubject = new BehaviorSubject<any>(null);
@@ -16,7 +16,7 @@ export class WebsocketService {
   constructor() {
     this.stompClient = new Client({
       webSocketFactory: () => {
-        return new SockJS('http://localhost:8100/ws'); // Assurez-vous que l'URL correspond à votre configuration Spring Boot
+        return new SockJS(this.baseUrl + '/ws'); // Assurez-vous que l'URL correspond à votre configuration Spring Boot
       },
       onConnect: () => {
         console.log('Connecté au serveur WebSocket!');

@@ -1,6 +1,18 @@
 version: '3.8'
 services:
 
+  nginx-proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    ports:
+      - '80:80'   # Port HTTP (votre app sera ici)
+      - '81:81'   # Interface d'administration Nginx
+    volumes:
+      - ./nginx_data:/data
+      - ./nginx_letsencrypt:/etc/letsencrypt
+    networks:
+      - spring-cloud-network
+
   server-db:
     image: postgres
     container_name: myfinappdbpostgres2
@@ -12,12 +24,13 @@ services:
       POSTGRES_USER: admin
     ports:
       - "8300:5432"
+    depends_on:
+      - nginx-proxy
     networks:
       - spring-cloud-network
 
-
   eureka-server:
-    image: my-eureka-service:latest # Remplacez par votre image Eureka
+    image: smrp1111/my-eureka-service:latest # Remplacez par votre image Eureka
     ports:
       - "8761:8761"
     depends_on:
@@ -26,7 +39,7 @@ services:
       - spring-cloud-network
 
   gateway-service:
-    image: my-gateway-service:latest # Le nom de votre image de gateway
+    image: smrp1111/my-gateway-service:latest # Le nom de votre image de gateway
     ports:
       - "8889:8888"
     environment:
@@ -37,7 +50,7 @@ services:
       - spring-cloud-network
       
   my-appfin-back-service:
-    image: my-appfin-back-service:latest
+    image: smrp1111/my-appfin-back-service:latest
     ports:
       - "8080:8080"
     environment:
@@ -49,7 +62,7 @@ services:
       - spring-cloud-network
       
   my-appfin-batch-service:
-    image: my-appfin-batch-service:latest
+    image: smrp1111/my-appfin-batch-service:latest
     ports:
       - "8200:8200"
     environment:
@@ -61,7 +74,7 @@ services:
       - spring-cloud-network
       
   my-appfin-front-service:
-    image: my-appfin-front-service:latest
+    image: smrp1111/my-appfin-front-service:latest
     ports:
       - "8100:8100"
     environment:
@@ -78,6 +91,8 @@ services:
 
 volumes:
   myfinappvolume:
+  nginx_data:
+  nginx_letsencrypt:
 
 networks:
   spring-cloud-network:

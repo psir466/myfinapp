@@ -1,17 +1,29 @@
 version: '3.8'
 services:
 
-  nginx-proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
+  traefik:
+    image: traefik:v3.6.2
+    container_name: traefik
+    command:
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.traefik.address=:8090"
     ports:
-      - '80:80'   # Port HTTP (votre app sera ici)
-      - '81:81'   # Interface d'administration Nginx
+      - "80:80"
+      - "8090:8090"
     volumes:
-      - ./nginx_data:/data
-      - ./nginx_letsencrypt:/etc/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - spring-cloud-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+      - "traefik.http.routers.dashboard.entrypoints=traefik"
+      - "traefik.http.routers.dashboard.service=api@internal"
 
   server-db:
     image: postgres
@@ -25,37 +37,37 @@ services:
     ports:
       - "8300:5432"
     depends_on:
-      - nginx-proxy
+      - traefik
     networks:
       - spring-cloud-network
 
   eureka-server:
-    image: smrp1111/my-eureka-service:latest # Remplacez par votre image Eureka
-    ports:
-      - "8761:8761"
+    image: smrp1111/my-eureka-service:latest
     depends_on:
       - server-db
     networks:
       - spring-cloud-network
 
   gateway-service:
-    image: smrp1111/my-gateway-service:latest # Le nom de votre image de gateway
-    ports:
-      - "8889:8888"
+    image: smrp1111/my-gateway-service:latest
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
     depends_on:
       - eureka-server
     networks:
       - spring-cloud-network
+    labels:
+      - "traefik.enable=true"
+      - 'traefik.http.routers.gateway.rule=Host("api.finapp.local")'
+      - "traefik.http.services.gateway.loadbalancer.server.port=8888"
       
   my-appfin-back-service:
     image: smrp1111/my-appfin-back-service:latest
-    ports:
-      - "8080:8080"
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
       DB_URL: "jdbc:postgresql://server-db:5432/myfinappdb"
+      DB_USER: "admin"
+      DB_PASSWORD: "1234"
     depends_on:
       - gateway-service
     networks:
@@ -63,8 +75,6 @@ services:
       
   my-appfin-batch-service:
     image: smrp1111/my-appfin-batch-service:latest
-    ports:
-      - "8200:8200"
     environment:
       BASEREFGATE_BACKSERVICE: "http://gateway-service:8888/MYFINAPPBACKSERVICE"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
@@ -87,6 +97,10 @@ services:
       - my-appfin-batch-service
     networks:
       - spring-cloud-network
+    labels:
+      - "traefik.enable=true"
+      - 'traefik.http.routers.front.rule=Host("finapp.local")'
+      - "traefik.http.services.front.loadbalancer.server.port=8100"
       
 
 volumes:

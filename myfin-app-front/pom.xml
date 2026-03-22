@@ -22,7 +22,7 @@
 	<dependency>
     	<groupId>org.openapitools</groupId>
     	<artifactId>jackson-databind-nullable</artifactId>
-    	<version>0.2.6</version>  
+    	<version>0.2.9</version>  
     </dependency>
 
 	<dependency>
@@ -38,7 +38,12 @@
     <dependency>
     	<groupId>org.jsoup</groupId>
     	<artifactId>jsoup</artifactId>
-    	<version>1.15.3</version>
+    	<version>1.22.1</version>
+	</dependency>
+
+	<dependency>
+  		<groupId>com.fasterxml.jackson.datatype</groupId>
+  		<artifactId>jackson-datatype-jsr310</artifactId>
 	</dependency>
   
   </dependencies>
@@ -116,7 +121,7 @@
 						 <plugin>
             	<groupId>org.openapitools</groupId>
     			<artifactId>openapi-generator-maven-plugin</artifactId>
-    			<version>7.12.0</version>
+    			<version>7.20.0</version>
             <executions>
                <execution>
                   <id>generate-code-back</id>
@@ -166,12 +171,26 @@
                         <useOptional>false</useOptional>
                         <!-- Make the models serializable -->
                         <serializableModel>true</serializableModel>
-                        <dateLibrary>java8</dateLibrary>
+                        <dateLibrary>java17</dateLibrary>
 						<basePackage>org.psi.myfinappfrontapp.api</basePackage>
 						<apiPackage>org.psi.myfinappfrontapp.api.api</apiPackage> 
 	               	 	<modelPackage>org.psi.myfinappfrontapp.api.model</modelPackage>
-
                      </configOptions>
+
+
+					<typeMappings>
+        				<type>date=LocalDate</type>
+        				<type>DateTime=OffsetDateTime</type>
+    				</typeMappings>
+
+    				<importMappings>
+        				<import>LocalDate=java.time.LocalDate</import>
+        				<import>OffsetDateTime=java.time.OffsetDateTime</import>
+    				</importMappings>
+
+
+
+
                   </configuration>
                	</execution>
 
@@ -223,12 +242,25 @@
                         <useOptional>false</useOptional>
                         <!-- Make the models serializable -->
                         <serializableModel>true</serializableModel>
-                        <dateLibrary>java8</dateLibrary>
+                        <dateLibrary>java17</dateLibrary>
 						<basePackage>org.psi.myfinappfrontapp.api2</basePackage>
 						<apiPackage>org.psi.myfinappfrontapp.api2.api</apiPackage> 
 	               	 	<modelPackage>org.psi.myfinappfrontapp.api2.model</modelPackage>
 
                      </configOptions>
+
+
+
+					<typeMappings>
+        				<type>date=LocalDate</type>
+        				<type>DateTime=OffsetDateTime</type>
+    				</typeMappings>
+
+    				<importMappings>
+        				<import>LocalDate=java.time.LocalDate</import>
+        				<import>OffsetDateTime=java.time.OffsetDateTime</import>
+    				</importMappings>
+
                   </configuration>
                	</execution>
 
@@ -284,9 +316,9 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.6</version> <configuration>
+				<version>3.5.1</version> <configuration>
 					<from>
-						<image>eclipse-temurin:17-jre-focal</image> </from>
+						<image>eclipse-temurin:25</image> </from>
 					<to>
 						<image>smrp1111/my-appfin-front-service</image>
 					</to>

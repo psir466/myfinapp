@@ -12,8 +12,9 @@ gradle/wrapper/gradle-wrapper.properties
 gradlew
 gradlew.bat
 main/java/org/psi/myfinappfrontapp/api2/ApiClient.java
-main/java/org/psi/myfinappfrontapp/api2/JavaTimeFormatter.java
 main/java/org/psi/myfinappfrontapp/api2/RFC3339DateFormat.java
+main/java/org/psi/myfinappfrontapp/api2/RFC3339InstantDeserializer.java
+main/java/org/psi/myfinappfrontapp/api2/RFC3339JavaTimeModule.java
 main/java/org/psi/myfinappfrontapp/api2/ServerConfiguration.java
 main/java/org/psi/myfinappfrontapp/api2/ServerVariable.java
 main/java/org/psi/myfinappfrontapp/api2/StringUtil.java

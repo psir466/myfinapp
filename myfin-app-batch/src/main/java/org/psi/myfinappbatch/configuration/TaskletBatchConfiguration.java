@@ -1,12 +1,14 @@
 package org.psi.myfinappbatch.configuration;
 
-import org.springframework.batch.core.Step;
+
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.step.*;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.infrastructure.repeat.*;
+import org.springframework.batch.infrastructure.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +30,7 @@ import java.util.Optional;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.springframework.batch.core.Job;
+import org.springframework.batch.core.job.*;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -51,9 +53,6 @@ public class TaskletBatchConfiguration {
 
     @Autowired
     private JobRepository jobRepository;
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
 
     @Autowired
     DataService dataService;
@@ -242,7 +241,7 @@ public class TaskletBatchConfiguration {
     }
 
     @Bean
-    public Step taskletStep(Tasklet myTasklet) {
+    public Step taskletStep(Tasklet myTasklet, PlatformTransactionManager transactionManager) {
         return new StepBuilder("taskletStep", jobRepository)
                 .tasklet(myTasklet, transactionManager)
                 .build();
@@ -253,6 +252,11 @@ public class TaskletBatchConfiguration {
         return new JobBuilder("taskletJob", jobRepository)
                 .start(taskletStep)
                 .build();
+    }
+
+    @Bean
+    public ResourcelessTransactionManager transactionManager() {
+        return new ResourcelessTransactionManager();
     }
 
 }

@@ -25,7 +25,7 @@ paths:
           application/json:
             schema:
               items:
-                $ref: '#/components/schemas/FileBase64'
+                $ref: "#/components/schemas/FileBase64"
               type: array
         required: true
       responses:

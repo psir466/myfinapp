@@ -17,8 +17,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
-        <version>5.2.3</version>
+        <version>5.5.1</version>
       </dependency>
 
       <dependency>
@@ -48,7 +48,7 @@
       <dependency>
         <groupId>org.openapitools</groupId>
         <artifactId>jackson-databind-nullable</artifactId>
-        <version>0.2.6</version>  
+        <version>0.2.9</version>  
       </dependency>
 
     <dependency>
@@ -59,7 +59,7 @@
     <dependency>
     		<groupId>org.springdoc</groupId>
     		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    		<version>2.8.4</version>
+    		<version>3.0.2</version>
 		</dependency>
 
     
@@ -67,8 +67,13 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-			<version>4.2.1</version>
+			<version>5.0.1</version>
 		</dependency>
+
+    	<dependency>
+  		  <groupId>com.fasterxml.jackson.datatype</groupId>
+  		  <artifactId>jackson-datatype-jsr310</artifactId>
+	  </dependency>
 
 
   </dependencies>
@@ -80,7 +85,7 @@
 			 <plugin>
           <groupId>org.openapitools</groupId>
     			<artifactId>openapi-generator-maven-plugin</artifactId>
-    			<version>7.12.0</version>
+    			<version>7.20.0</version>
           <!-- Pour faire reconnaitre generated source en tant java dans vs code ??????? -->
           <?m2e execute onConfiguration?>
 		      <?m2e execute onIncremental?>
@@ -135,8 +140,20 @@
                         <useOptional>false</useOptional>
                         <!-- Make the models serializable -->
                         <serializableModel>true</serializableModel>
-                        <dateLibrary>java8</dateLibrary>
+                        <dateLibrary>java17</dateLibrary>
                      </configOptions>
+
+
+	                  <typeMappings>
+        				      <type>date=LocalDate</type>
+        				      <type>DateTime=OffsetDateTime</type>
+    				        </typeMappings>
+
+    				        <importMappings>
+        				      <import>LocalDate=java.time.LocalDate</import>
+        				      <import>OffsetDateTime=java.time.OffsetDateTime</import>
+    				      </importMappings>
+
                   </configuration>
                	</execution>
             	</executions>
@@ -147,9 +164,9 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.5</version> <configuration>
+				<version>3.5.1</version> <configuration>
 					<from>
-						<image>eclipse-temurin:17-jre-focal</image> </from>
+						<image>eclipse-temurin:25</image> </from>
 					<to>
 						<image>smrp1111/my-appfin-batch-service</image>
 					</to>

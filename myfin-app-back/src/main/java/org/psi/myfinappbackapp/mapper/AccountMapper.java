@@ -16,7 +16,7 @@ import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
 
 
-@Service
+
 @Mapper(componentModel = "spring")
 public abstract class AccountMapper {
 	

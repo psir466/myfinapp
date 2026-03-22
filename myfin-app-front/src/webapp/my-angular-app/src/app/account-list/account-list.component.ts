@@ -334,7 +334,7 @@ export class AccountListComponent implements OnInit{
 
         const selectType: string = selectTypes[0].name;
 
-
+        //test pour voir si les valeurs sont bien récupérées
         console.log("**************************" + this.myForm.value.end);
 
         console.log("**************************" + this.myForm.value.endDate);

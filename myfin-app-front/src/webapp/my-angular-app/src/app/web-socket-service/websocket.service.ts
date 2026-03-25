@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class WebsocketService {
 
-  private baseUrl = 'http://finapp.local/backfront'; // URL de votre BoF
+  private baseUrl = '/backfront'; // URL de votre BoF
   private stompClient: Client;
   private isConnected = new BehaviorSubject<boolean>(false);
   private dataSubject = new BehaviorSubject<any>(null);

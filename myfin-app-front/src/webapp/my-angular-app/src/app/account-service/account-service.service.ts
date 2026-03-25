@@ -8,7 +8,7 @@ import { Account, AccountLine, AmountOfMoney, AccountDateSum, FileBase64, Market
 })
 export class AccountServiceService {
 
-  private baseUrl = 'http://finapp.local/backfront'; // URL de votre BoF
+  private baseUrl = '/backfront'; // URL de votre BoF
 
   constructor(private http: HttpClient) { }
 

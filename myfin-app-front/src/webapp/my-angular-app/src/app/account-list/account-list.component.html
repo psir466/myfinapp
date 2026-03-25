@@ -16,9 +16,7 @@
 
   @if (userAdmin) {
     <section class="upload-section">
-      <h2>Upload de fichiers</h2>
-      <input type="file" multiple (change)="onFileSelected($event)" />
-      <button (click)="uploadFiles()">Upload</button>
+      <app-upload-file></app-upload-file>
     </section>
   }
 

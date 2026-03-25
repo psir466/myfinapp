@@ -56,10 +56,6 @@ services:
       - eureka-server
     networks:
       - spring-cloud-network
-    labels:
-      - "traefik.enable=true"
-      - 'traefik.http.routers.gateway.rule=Host("api.finapp.local")'
-      - "traefik.http.services.gateway.loadbalancer.server.port=8888"
       
   my-appfin-back-service:
     image: smrp1111/my-appfin-back-service:latest
@@ -105,8 +101,6 @@ services:
 
 volumes:
   myfinappvolume:
-  nginx_data:
-  nginx_letsencrypt:
 
 networks:
   spring-cloud-network:

@@ -12,6 +12,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { HeaderComponent } from "../header/header.component";
 import { LeftSidebarComponent } from "../left-sidebar/left-sidebar.component";
 import { AuthService } from '../auth-service/auth.service';
+import { UploadFile } from "../upload-file/upload-file";
 
 
 
@@ -20,7 +21,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-account-list',
-  imports: [ReactiveFormsModule, HeaderComponent, LeftSidebarComponent],
+  imports: [ReactiveFormsModule, HeaderComponent, LeftSidebarComponent, UploadFile],
   templateUrl: './account-list.component.html',
   styleUrls: ['./account-list.component.css']
 })
@@ -32,7 +33,6 @@ Chart.register(...registerables);
 export class AccountListComponent implements OnInit{
 
 
-  selectedFiles: File[] = [];
 	accounts: Account[] = [];
   accountTypes: string[] = [];
   sumDates: AccountDateSum[] | AccountDatePercentage[] = [];
@@ -259,55 +259,6 @@ export class AccountListComponent implements OnInit{
           },
         },
       });
-    }
-
-    onFileSelected(event: any) {
-      this.selectedFiles = Array.from(event.target.files);
-    }
-
-
-    uploadFiles() {
-      const f64: FileBase64[] = [];
-
-      const promises = this.selectedFiles.map((file) => {
-        return new Promise<{ base64: string }>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e: any) => {
-            const base64 = e.target.result.split(',')[1]; // Extract base64 part
-            resolve({ base64: base64 });
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      });
-
-      Promise.all(promises)
-        .then((results) => {
-          this.accountService.loadFiles(results).subscribe({
-            next: (response) => {
-              this.snackBar.open('Data loaded successfully!', 'Close', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'bottom',
-                panelClass: ['success-snackbar'],
-              });
-            },
-            // L'erreur est désormais gérée par l'intercepteur d'erreurs global
-            error: (error) => {
-              console.log('Erreur capturée au niveau du composant:', error);
-              // L'utilisateur a déjà reçu un snackbar du côté de l'intercepteur
-            },
-          });
-        })
-        .catch((promiseError) => {
-          console.error('Error in Promise.all:', promiseError);
-          this.snackBar.open('Error reading files. Please try again.', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['error-snackbar'],
-          });
-        });
     }
 
 

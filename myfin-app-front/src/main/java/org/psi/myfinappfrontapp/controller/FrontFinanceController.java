@@ -3,6 +3,7 @@ package org.psi.myfinappfrontapp.controller;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import org.psi.myfinappfrontapp.custom.CustomApiApi;
 import org.psi.myfinappfrontapp.custom.CustomApiApi2;
@@ -19,11 +20,13 @@ import org.psi.myfinappfrontapp.api.model.MarketDTODetailPercentage;
 import org.psi.myfinappfrontapp.api.model.MarketDTOPercentage;
 import org.psi.myfinappfrontapp.api2.model.FileBase64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -50,6 +53,7 @@ public class FrontFinanceController {
 
 	@Autowired
 	CustomSecurityControllerApi customSecurityControllerApi;
+
 
 	private static final Logger logger = LoggerFactory.getLogger(FrontFinanceController.class);
 	
@@ -233,6 +237,8 @@ public class FrontFinanceController {
 		}
 		return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
 	}
+
+
 
 
 }

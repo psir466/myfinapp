@@ -272,7 +272,13 @@
 			<plugin>
 		        <groupId>com.github.eirslett</groupId>
 		        <artifactId>frontend-maven-plugin</artifactId>
-		        <version>1.14.1</version>
+		        <version>2.0.0</version>
+
+
+				<configuration>
+        			<installDirectory>src/webapp/my-angular-app</installDirectory>
+    			</configuration>
+
 		        <executions>
 		          <execution>
 		            <id>install node and npm</id>
@@ -280,8 +286,8 @@
 		              <goal>install-node-and-npm</goal>
 		            </goals>
 		            <configuration>
-		              <nodeVersion>v22.11.0</nodeVersion>
-		              <npmVersion>10.2.3</npmVersion>
+		              <nodeVersion>v24.14.1</nodeVersion>
+		              <npmVersion>11.11.0</npmVersion>
 		            </configuration>
 		          </execution>
 		          <execution>

@@ -64,6 +64,7 @@ services:
       DB_URL: "jdbc:postgresql://server-db:5432/myfinappdb"
       DB_USER: "admin"
       DB_PASSWORD: "1234"
+      JWT_SECRET: "oBSrAgQdxUhvwY0ljl1Txko99xclnvwYysjR7Jh3sqFMi6B2lr13PjuxPHx9U/bK1919PYuxPHx9U/bK1919PYuxPHx9U/bg"
     depends_on:
       - gateway-service
     networks:

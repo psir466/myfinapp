@@ -1,0 +1,162 @@
+version: '3.8'
+services:
+
+  traefik:
+    image: traefik:v3.6.2
+    container_name: traefik
+    command:
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.traefik.address=:8090"
+    ports:
+      - "80:80"
+      - "8090:8090"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - spring-cloud-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+      - "traefik.http.routers.dashboard.entrypoints=traefik"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+  server-db:
+    image: postgres
+    container_name: myfinappdbpostgres2
+    volumes:
+      - myfinappvolume:/var/lib/postgresql
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "8300:5432"
+    depends_on:
+      - traefik
+    networks:
+      - spring-cloud-network
+
+  eureka-server:
+    image: smrp1111/my-eureka-service:latest
+    depends_on:
+     - server-db
+    networks:
+      - spring-cloud-network
+      
+
+  gateway-service:
+    image: smrp1111/my-gateway-service:latest
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '< /dev/tcp/localhost/8888' || exit 1"]
+      interval: 15s # On laisse un peu de temps entre chaque check
+      timeout: 5s
+      retries: 5
+      start_period: 59s # Optionnel : donne 20s de sursis à Java avant le 1er check
+    depends_on:
+      - eureka-server
+    networks:
+      - spring-cloud-network
+     
+
+  config-server:  # <--- C'EST CE NOM QUI COMPTE POUR LE RÉSEAU
+    image: smrp1111/my-config-service:latest
+    volumes:
+      # Format : [chemin_hote]:[chemin_conteneur]
+      - ./config-repo:/app/config-data
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '< /dev/tcp/localhost/8882' || exit 1"]
+      interval: 15s # On laisse un peu de temps entre chaque check
+      timeout: 5s
+      retries: 5
+      start_period: 59s # Optionnel : donne 20s de sursis à Java avant le 1er check
+    depends_on:
+      gateway-service: 
+        condition: service_healthy
+    networks:
+      - spring-cloud-network       
+  
+  my-appfin-back-service:
+    image: smrp1111/my-appfin-back-service:latest
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${DB_JWT}
+      AUTH_RESOURCE: ${AUTH_RESOURCE}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_NAME: ${ADMIN_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '< /dev/tcp/localhost/8080' || exit 1"]
+      interval: 10s # On laisse un peu de temps entre chaque check
+      timeout: 5s
+      retries: 5
+      start_period: 50s # Optionnel : donne 20s de sursis à Java avant le 1er check  
+    depends_on:
+      config-server: 
+        condition: service_healthy
+      gateway-service: 
+        condition: service_healthy
+    networks:
+      - spring-cloud-network
+      
+  my-appfin-batch-service:
+    image: smrp1111/my-appfin-batch-service:latest
+    environment:
+      BASEREFGATE_BACKSERVICE: "http://gateway-service:8888/MYFINAPPBACKSERVICE"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '< /dev/tcp/localhost/8200' || exit 1"]
+      interval: 15s # On laisse un peu de temps entre chaque check
+      timeout: 5s
+      retries: 5
+      start_period: 59s # Optionnel : donne 20s de sursis à Java avant le 1er check  
+    depends_on:
+      my-appfin-back-service:
+        condition: service_healthy
+    networks:
+      - spring-cloud-network
+      
+  my-appfin-front-service:
+    image: smrp1111/my-appfin-front-service:latest
+    ports:
+      - "8100:8100"
+    environment:  
+      SERVER_PORT: 8100 
+      BASEREFGATE_BACKSERVICE: "http://gateway-service:8888/MYFINAPPBACKSERVICE"
+      BASEREFGATE_BATCHSERVICE: "http://gateway-service:8888/MYFINAPPBATCHSERVICE"
+      #BASEREFGATE_CONFIGSERVICE: "configserver:http://config-server:8882/"       # <--- on ne passe pas par la gateway
+      SPRING_CLOUD_CONFIG_FAIL_FAST: "true"
+      SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS: 10
+      SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL: 2000
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8882/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+    depends_on:
+      my-appfin-back-service:
+        condition: service_healthy
+      my-appfin-batch-service:
+        condition: service_healthy
+    networks:
+      - spring-cloud-network
+    labels:
+      - "traefik.enable=true"
+      - 'traefik.http.routers.front.rule=Host("finapp.local")'
+      - "traefik.http.services.front.loadbalancer.server.port=8100"
+      
+
+volumes:
+  myfinappvolume:
+
+networks:
+  spring-cloud-network:
+    driver: bridge
